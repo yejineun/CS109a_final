@@ -20190,7 +20190,7 @@ $${\mathit{R}\mathit{M}\mathit{S}\mathit{E}} = \sqrt{\frac{1}{N}\sum(x_{i} - \ha
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="The-baseline-model">The baseline model<a class="anchor-link" href="#The-baseline-model">&#182;</a></h2>
+<h1 id="The-baseline-model">The baseline model<a class="anchor-link" href="#The-baseline-model">&#182;</a></h1>
 </div>
 </div>
 </div>
@@ -20485,15 +20485,6 @@ $${\mathit{R}\mathit{M}\mathit{S}\mathit{E}} = \sqrt{\frac{1}{N}\sum(x_{i} - \ha
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Pre-collaborative-filtering-step:-Organize-data-into-a-table-with-users-and-businesses'-ratings-as-two-columns.">Pre-collaborative filtering step: Organize data into a table with users and businesses' ratings as two columns.<a class="anchor-link" href="#Pre-collaborative-filtering-step:-Organize-data-into-a-table-with-users-and-businesses'-ratings-as-two-columns.">&#182;</a></h3>
-</div>
-</div>
-</div>
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
@@ -20617,12 +20608,7 @@ $${\mathit{R}\mathit{M}\mathit{S}\mathit{E}} = \sqrt{\frac{1}{N}\sum(x_{i} - \ha
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Using the above dataframe, we performed memory-based collaborative filtering. There will be two portions of this - item-item collaborative filtering, and user-item collaborative filtering.</p>
-<ol>
-<li>Item-Item collaborative filtering: "Users who liked this restaurant also liked ..."</li>
-<li>User-Item collaborative filtering: "Users who are similar to you also liked ..."</li>
-</ol>
-<p>This requires us to create a user-item matrix, with one axis being the users, and another axis being the restaurants. Each value will represent the rating for that user and restaurant. We will create a training matrix with 75% of the observations, and a test matrix with 25% of the observations.</p>
+<p>Using the above dataframe, we created user-item matrix for performing memory-based collaborative filtering. In the user-item matrix, one axis represents the users, and another axis being the restaurants. Each value in the matrix will represent the rating for that user and restaurant.</p>
 
 </div>
 </div>
@@ -20710,6 +20696,10 @@ $${\mathit{R}\mathit{M}\mathit{S}\mathit{E}} = \sqrt{\frac{1}{N}\sum(x_{i} - \ha
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Using the user-item matrix (sample data, not the entire set), we computed the item-item similarity and user-item similarity. Since the ratings are all positive, the output will range from 0 to 1.</p>
+<ol>
+<li>Item-Item collaborative filtering: "Users who liked this restaurant also liked ..."</li>
+<li>User-Item collaborative filtering: "Users who are similar to you also liked ..."</li>
+</ol>
 
 </div>
 </div>
@@ -20733,7 +20723,7 @@ $${\mathit{R}\mathit{M}\mathit{S}\mathit{E}} = \sqrt{\frac{1}{N}\sum(x_{i} - \ha
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Next is to use our similarity matrices to make predictions. We will need to consider bias again when comparing user-similarity.  This is not necessary for item-similarity, because each user is used in the prediction itself.</p>
+<p>Next is to use our similarity matrices to make predictions. We will need to consider bias again when comparing user-similarity.  This is not necessary for item-similarity, because each user is used in the prediction itself. Also, we created a training matrix with 75% of the observations, and a test matrix with 25% of the observations.</p>
 
 </div>
 </div>
