@@ -11817,7 +11817,8 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Introduction-and-description-of-data">Introduction and description of data<a class="anchor-link" href="#Introduction-and-description-of-data">&#182;</a></h1><p><img src="images/datasetoverview.png" alt="alt text" title="data overview"></p>
+<h1 id="Introduction-and-description-of-data">Introduction and description of data<a class="anchor-link" href="#Introduction-and-description-of-data">&#182;</a></h1><p><img src="images/datasetoverview.png" alt="alt text" title="data overview">
+Image credit: Yelp</p>
 <p>The Yelp data is vast and rich: it contains millions of reviews of different business types (e.g. restaurants and dry cleaners), and each business type has different set of attributes associated with them. Each review at minimum consists of review text and review star rating. Because of its size and richness, it presented an initial challenge for us to decide what data to include in our modeling and what features should be engineered. In addition, not every user has made several reviews or reviews with different ratings, so we needed to figure out what datasets to use for training vs. testing. To this end, we performed EDA on the data, specifically to look at relevant business attributes, user attributes, and reviews. We reasoned that these are the core information needed to link users and businesses with their preferences (hence, we disregarded data such as checkin, photos, and tip).</p>
 <h2 id="A-revised-project-workflow-based-on-the-insights-from-EDA">A revised project workflow based on the insights from EDA<a class="anchor-link" href="#A-revised-project-workflow-based-on-the-insights-from-EDA">&#182;</a></h2><p>We will use the cleaned datasets to accomplish three major goals:</p>
 <ol>
@@ -20097,9 +20098,10 @@ AACAjEjIAQAAgIxIyAEAAICMSMgBAACAjF4BFK1fUGSxKOEAAAAASUVORK5CYII=
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Literature-review-/-related-work">Literature review / related work<a class="anchor-link" href="#Literature-review-/-related-work">&#182;</a></h1><h2 id="1.-Creating-a-baseline-model">1. Creating a baseline model<a class="anchor-link" href="#1.-Creating-a-baseline-model">&#182;</a></h2><p>Before trying collaborative filtering which is based on user's experience with a particular restaurant, we first created a baseline model that captures the user's bias (e.g. some users are more likely to give higher ratings than others) and the bias of the restaurant (e.g. a restaurant could be a part of a national chain like Cheesecake Factory that has a higher brand power than Chipotle that recently suffered from mass infections). To this end, we relied on the method described in <em>Advances in Collaborative Filtering</em>, <a href="https://datajobs.com/data-science-repo/Collaborative-Filtering-%5BKoren-and-Bell%5D.pdf">(link)</a> by Yehuda Koren's and Robert Bell.</p>
-<h2 id="2.-Matrix-factorization">2. Matrix factorization<a class="anchor-link" href="#2.-Matrix-factorization">&#182;</a></h2><ul>
-<li><a href="https://cambridgespark.com/content/tutorials/implementing-your-own-recommender-systems-in-Python/index.html">https://cambridgespark.com/content/tutorials/implementing-your-own-recommender-systems-in-Python/index.html</a></li>
-<li><a href="https://towardsdatascience.com/how-to-build-a-simple-song-recommender-296fcbc8c85">https://towardsdatascience.com/how-to-build-a-simple-song-recommender-296fcbc8c85</a></li>
+<h2 id="2.-Collaborative-filtering">2. Collaborative filtering<a class="anchor-link" href="#2.-Collaborative-filtering">&#182;</a></h2><p>Collaborative filtering is based on the past experience of a user with different restaurants so that we can find what new restaurants that are similar to the ones user liked in the past for recommendation, and also to find the new restaurants that similars users have liked already. We found the following two websites very useful for understanding the concepts and methods for implementation (i.e. singular value decomposition and cosine similarity through pairwise distances).</p>
+<ul>
+<li><a href="https://cambridgespark.com/content/tutorials/implementing-your-own-recommender-systems-in-Python/index.html">CF ref 1</a></li>
+<li><a href="https://towardsdatascience.com/how-to-build-a-simple-song-recommender-296fcbc8c85">CF ref 2</a></li>
 </ul>
 
 </div>
@@ -20121,26 +20123,24 @@ AACAjEjIAQAAgIxIyAEAAICMSMgBAACAjF4BFK1fUGSxKOEAAAAASUVORK5CYII=
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Modeling-approach-and-project-trajectory">Modeling approach and project trajectory<a class="anchor-link" href="#Modeling-approach-and-project-trajectory">&#182;</a></h1><p>/// add a graphic here about baseline approach and what additional things we did</p>
-<h2 id="I.-Baseline-modeling">I. Baseline modeling<a class="anchor-link" href="#I.-Baseline-modeling">&#182;</a></h2><p>Using the method described in <em>Advances in Collaborative Filtering</em>, <a href="https://datajobs.com/data-science-repo/Collaborative-Filtering-%5BKoren-and-Bell%5D.pdf">(link)</a> by Yehuda Koren's and Robert Bell, we created a baseline model with user bias and restaurant bias terms. According to Koren and Bell, the baseline model can be expressed as the following:</p>
-<p>$b_{u i} = \mu + b_{u} + b_{ i}$</p>
-<p>where $\mu$ represents the mean of all ratings. $b_{u}$ and $b_{i}$ represent the observed deviation of user $u$ and item $i$, respectively.</p>
-<p>In order to find the parameters $b_{u}$ and $b_{i}$, we used two approaches:</p>
-<h3 id="approach-1:-Use-the-formulas-given-in-the-paper-to-find-the-bias">approach 1: Use the formulas given in the paper to find the bias<a class="anchor-link" href="#approach-1:-Use-the-formulas-given-in-the-paper-to-find-the-bias">&#182;</a></h3><p>$b_{i}$ = $\left(\frac{\sum u \epsilon R(i) (r_{ui} - \mu)}{\lambda_{2} + |R(i)|}\right)$</p>
-<p>$b_{u}$ = $\left(\frac{\sum u \epsilon R(i) (r_{ui} - \mu)}{\lambda_{3} + |R(u)|}\right)$</p>
-<p>Where $\lambda_{2}$ and $\lambda_{3}$ are the regularization parameters (to be chosen by cross-validation), R(i) represents all users who rated item $i$, and R(u) represents all items that user $u$ has rated.</p>
-<h3 id="approach-2:-Use-Ridge-regression-to-find-the-bias-terms">approach 2: Use Ridge regression to find the bias terms<a class="anchor-link" href="#approach-2:-Use-Ridge-regression-to-find-the-bias-terms">&#182;</a></h3><p>We performed Ridge Regression using cross-validation.</p>
-<h2 id="II.-Matrix-factorization">II. Matrix factorization<a class="anchor-link" href="#II.-Matrix-factorization">&#182;</a></h2><p>Now that we have built the user-item matrix, we need to calculate the similarity and use this to create a similarity matrix.</p>
-<p>Item-Item collaborative filtering will measure similarity by observing all users who have rated both restaurants.</p>
-<p>todo: insert pic2 here</p>
-<p>User-Item collaborative filtering will measure similarity by observing all items that are rated by both users.</p>
-<p>todo: insert pic3 here</p>
-<p>Similarity will be calculated by using the mathematical standard for distance metrics - cosine similarity. We consider the ratings as vectors in <em>n</em>-dimensional space, and calculate the angle between these vectors to determine the similarity.</p>
-<p>Cosine similarity for users <em>a</em> and <em>m</em> are calculated using the following formula:</p>
-$$s_{u}^{cos}(u_{k},u_{a}) = \frac{u_{k} \cdot u_{a}}{\left\| u_{k} \right\|\left\| u_{a} \right\|} = \frac{\sum x_{k,m}x_{a,m}}{\sqrt{\sum x_{k,m}^{2}\sum x_{a,m}^{2}}}$$<p>To calculate similarity between items m and b you use the formula:</p>
-$$s_{u}^{cos}(i_{m},i_{b}) = \frac{i_{m} \cdot i_{b}}{\left\| i_{m} \right\|\left\| i_{b} \right\|} = \frac{\sum x_{a,m}x_{a,b}}{\sqrt{\sum x_{a,m}^{2}\sum x_{a,b}^{2}}}$$<p>Source: <a href="https://cambridgespark.com/content/tutorials/implementing-your-own-recommender-systems-in-Python/index.html">https://cambridgespark.com/content/tutorials/implementing-your-own-recommender-systems-in-Python/index.html</a></p>
-<p>Since all of the ratings are positive, the output of cosine distance will range between 0 and 1, with a higher rating corresponding with a more similar user/item.</p>
-<p>The drawback to memory-based prediction is that it isn't scalable. As a result, this next cell will only run for the sample set. When attempting to run this cell on the entire data matrix, python returns a memory error.</p>
+<h1 id="Modeling-approach-and-project-trajectory">Modeling approach and project trajectory<a class="anchor-link" href="#Modeling-approach-and-project-trajectory">&#182;</a></h1><h2 id="I.-Baseline-modeling">I. Baseline modeling<a class="anchor-link" href="#I.-Baseline-modeling">&#182;</a></h2><p>Using the method described in <em>Advances in Collaborative Filtering</em>, <a href="https://datajobs.com/data-science-repo/Collaborative-Filtering-%5BKoren-and-Bell%5D.pdf">(link)</a> by Yehuda Koren's and Robert Bell, we created a baseline model with user bias and restaurant bias terms. According to Koren and Bell, the baseline model can be expressed as the following:</p>
+<p><h2><center>$b_{u i} = \mu + b_{u} + b_{ i}$</center></h2>
+where $\mu$ represents the mean of all ratings. $b_{u}$ and $b_{i}$ represent the observed deviation of user $u$ and item $i$, respectively. In order to find the parameters $b_{u}$ and $b_{i}$, we used two approaches:</p>
+<h4 id="Approach-1:-Use-the-formulas-given-in-the-Koren-and-Bell-paper-to-find-the-bias">Approach 1: Use the formulas given in the Koren and Bell paper to find the bias<a class="anchor-link" href="#Approach-1:-Use-the-formulas-given-in-the-Koren-and-Bell-paper-to-find-the-bias">&#182;</a></h4><center>$b_{i}$ = $\left(\frac{\sum u \epsilon R(i) (r_{ui} - \mu)}{\lambda_{2} + |R(i)|}\right)$</center>
+<center>$b_{u}$ = $\left(\frac{\sum u \epsilon R(i) (r_{ui} - \mu)}{\lambda_{3} + |R(u)|}\right)$</center><p>Where $\lambda_{2}$ and $\lambda_{3}$ are the regularization parameters (to be chosen by cross-validation), R(i) represents all users who rated item $i$, and R(u) represents all items that user $u$ has rated.</p>
+<h4 id="Approach-2:-Use-Ridge-regression-to-find-the-bias-terms">Approach 2: Use Ridge regression to find the bias terms<a class="anchor-link" href="#Approach-2:-Use-Ridge-regression-to-find-the-bias-terms">&#182;</a></h4><p>We performed Ridge Regression using cross-validation.</p>
+<h2 id="II.-Memory-Based-Collaborative-filtering">II. Memory-Based Collaborative filtering<a class="anchor-link" href="#II.-Memory-Based-Collaborative-filtering">&#182;</a></h2><p>As noted above in the Literature section, we wanted to take advantage of the wide user base and restaurant rating history in the Yelp database to provide a better recommendation system than the baseline model. To this aim, we implemented collaborative filtering (CF). The first step of CF is to create a user-item matrix, such as the one shown here for users and movies (image credit: CF ref 1).</p>
+<p><img src="images/useritemmatrix.png" alt="alt text" title="ui matrix"></p>
+<p>Using this user-item matrix, we can calculate the similarities between two items, and also between two users. Between two items, we are looking to find how their ratings were similar. For user-user similarity, we look at all the items that were commonly rated by the two users and how much their ratings were similar. By doing so, we obtain similarity metrics for item-item and user-user, leading to item-item collaborative filtering and user-item collaborative filtering, respectively. These concepts are nicely illustrated in the following images (image credit: CF ref 2).</p>
+<p>Item-Item collaborative filtering will measure similarity by observing all users who have rated both restaurants.
+<img src="images/item-to-item.png" alt="alt text" title="ui matrix"></p>
+<p>User-Item collaborative filtering will measure similarity by observing all items that are rated by both users.
+<img src="images/user-to-item.png" alt="alt text" title="ui matrix"></p>
+<p>To calculate the similarity, we used cosine similarity. We consider the ratings as vectors in <em>n</em>-dimensional space, and calculate the angle between these vectors to determine the similarity. Cosine similarity for users <em>a</em> and <em>m</em> are calculated using the following formula:</p>
+<center>$$s_{u}^{cos}(u_{k},u_{a}) = \frac{u_{k} \cdot u_{a}}{\left\| u_{k} \right\|\left\| u_{a} \right\|} = \frac{\sum x_{k,m}x_{a,m}}{\sqrt{\sum x_{k,m}^{2}\sum x_{a,m}^{2}}}$$</center>
+To calculate similarity between items m and b we used this formula:
+<center>$$s_{u}^{cos}(i_{m},i_{b}) = \frac{i_{m} \cdot i_{b}}{\left\| i_{m} \right\|\left\| i_{b} \right\|} = \frac{\sum x_{a,m}x_{a,b}}{\sqrt{\sum x_{a,m}^{2}\sum x_{a,b}^{2}}}$$</center><p>Because the Yelp ratings are in the scale of 1-5 (all positive numbers), the output of cosine distance will range between 0 and 1, where a value closer to 1 means a higher similarity.</p>
+<h2 id="III.-Model-Based-Collaborative-filtering">III. Model-Based Collaborative filtering<a class="anchor-link" href="#III.-Model-Based-Collaborative-filtering">&#182;</a></h2><p>The drawback to memory-based prediction is that it isn't scalable. As a result, this next cell will only run for the sample set. When attempting to run this cell on the entire data matrix, python returns a memory error.</p>
 <p>The prolem with memory-based collaborative filtering is that it is unable to make predictions for new users or restaurants. This is known as the cold-start problem. Model-based collaborative filtering can handle higher sparsity levels, but also suffer from the cold-start problem. Our next approach will be through model-based collaborative filtering.</p>
 <p>Model-based collaborative filtering also utilizes matrix-factorization, but it is also able to learn the features that describe the characteristics of each rating. It predicts unknown ratings by taking the dot product of the latent features of users or items.</p>
 <p>Matrix factorization allows us to restructure our user-item matrix into low-rank structure, and represent the matrix by the multiplication of two low-rank matrices, where the rows contain the latent factor. We use this matrix to approzimate our original matrix bt multiplying the low-rank matrices together, which fills in the missing entries in the original matrix.</p>
@@ -20166,7 +20166,7 @@ $$X = U * S * V^{(T)} $$<p>Where:</p>
 </li>
 </ul>
 <p>Finally, we make our prediction by taking the dot product of <strong>U</strong>, <strong>S</strong>, and <strong>$V^{(T)}$</strong></p>
-<h2 id="III.-Model-evaluation">III. Model evaluation<a class="anchor-link" href="#III.-Model-evaluation">&#182;</a></h2><p>To maintain compatibility with results published by others implementation of recommendation systems, we are going to adopt the standard set by the Netflix prize and the quality of our results will be measured using the root mean squared error (MSE).</p>
+<h2 id="IV.-Model-evaluation">IV. Model evaluation<a class="anchor-link" href="#IV.-Model-evaluation">&#182;</a></h2><p>To maintain compatibility with results published by others implementation of recommendation systems, we are going to adopt the standard set by the Netflix prize and the quality of our results will be measured using the root mean squared error (MSE).</p>
 $${\mathit{R}\mathit{M}\mathit{S}\mathit{E}} = \sqrt{\frac{1}{N}\sum(x_{i} - \hat{x_{i}})^{2}}$$<p>That measure puts more emphasis on large errors compared with the alternative of mean absolute error.</p>
 
 </div>
@@ -20193,177 +20193,18 @@ $${\mathit{R}\mathit{M}\mathit{S}\mathit{E}} = \sqrt{\frac{1}{N}\sum(x_{i} - \ha
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="k">import</span> <span class="n">LinearRegression</span>
-<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="k">import</span> <span class="n">Ridge</span>
-<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="k">import</span> <span class="n">RidgeCV</span>
-<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="k">import</span> <span class="n">LogisticRegression</span>
-<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="k">import</span> <span class="n">Lasso</span>
-<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="k">import</span> <span class="n">LassoCV</span>
-
-<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="k">import</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">accuracy_score</span><span class="p">,</span> <span class="n">r2_score</span><span class="p">,</span> <span class="n">confusion_matrix</span><span class="p">,</span> <span class="n">roc_curve</span><span class="p">,</span> <span class="n">roc_auc_score</span><span class="p">,</span> <span class="n">auc</span>
-
-<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="k">import</span> <span class="n">MinMaxScaler</span>
-<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">KFold</span>
-<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">GridSearchCV</span>
-<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">product</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
-<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="k">import</span> <span class="n">OneHotEncoder</span>
-<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="k">import</span> <span class="n">LabelEncoder</span>
-<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">train_test_split</span>
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-</pre></div>
-
-</div>
-</div>
-</div>
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">recommendations_full</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;data/recommendations.csv&#39;</span><span class="p">,</span><span class="n">encoding</span> <span class="o">=</span> <span class="s2">&quot;ISO-8859-1&quot;</span><span class="p">,</span><span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">sample</span> <span class="o">=</span> <span class="n">recommendations_full</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">frac</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>//anaconda/envs/snakes/lib/python3.5/site-packages/IPython/core/interactiveshell.py:2717: DtypeWarning: Columns (37,39,40,41,42,43,44,46,47,48,51,52,53,54,56,57,59,60,61,63,65,66,69,70,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102) have mixed types. Specify dtype option on import or set low_memory=False.
-  interactivity=interactivity, compiler=compiler, result=result)
-</pre>
-</div>
-</div>
-
-</div>
-</div>
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># get data in the appropriate format</span>
-
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">add_numerical_id()</span>
-<span class="sd">-this function replaces string identifiers with numeric identifiers</span>
-
-
-<span class="sd">inputs: dataframe, variable to be replaced, name of new variable</span>
-<span class="sd">outputs: dataframe with new variables, dataframe with JUST the new variables</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="c1">#todo- we can probably remove df_var_id as an output</span>
-<span class="k">def</span> <span class="nf">add_numerical_id</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">new_var</span><span class="p">):</span>
-    <span class="c1"># Get the list of Later, we&#39;ll change the user_id and business_id by numerical values</span>
-    <span class="n">unique_values</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
-    <span class="n">n_unique_values</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_values</span><span class="p">)</span>
-    <span class="n">df_var_id</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">unique_values</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">n_unique_values</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">var</span><span class="p">])</span>
-    <span class="n">df_var_id</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">new_var</span>
-    <span class="n">df_var_id</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_var_id</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="n">var</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">df</span><span class="p">,</span> <span class="n">df_var_id</span>
-</pre></div>
-
-</div>
-</div>
-</div>
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">create_dummy_var()</span>
-<span class="sd">--this function creates dummy variables and appends them to the dataframe</span>
-
-
-<span class="sd">inputs: dataframe, list of variables to create dummy variables</span>
-<span class="sd">outputs: updated dataframe, list of dummy variables that were created</span>
-
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="k">def</span> <span class="nf">create_dummy_var</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">list_vars</span><span class="p">):</span>
-    <span class="n">list_dummy_var</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">list_vars</span><span class="p">:</span>
-        <span class="n">dummy_vars</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">var</span><span class="p">],</span> <span class="n">prefix</span><span class="o">=</span><span class="n">var</span><span class="p">,</span> <span class="n">drop_first</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">dummy_vars</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">left_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  
-        <span class="n">list_dummy_var</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">dummy_vars</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">df</span><span class="p">,</span> <span class="n">list_dummy_var</span>
-</pre></div>
-
-</div>
-</div>
-</div>
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">cat_ftres</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;is_open&#39;</span><span class="p">,</span> <span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="s1">&#39;Fast Food&#39;</span><span class="p">,</span> <span class="s1">&#39;Sandwiches&#39;</span><span class="p">,</span> <span class="s1">&#39;Coffee &amp; Tea&#39;</span><span class="p">,</span>
-             <span class="s1">&#39;Burgers&#39;</span><span class="p">,</span> <span class="s1">&#39;user_elite_flag&#39;</span><span class="p">,</span> <span class="s1">&#39;user_friends_flag&#39;</span><span class="p">]</span>
-<span class="n">sample</span><span class="p">,</span> <span class="n">ftres_dummy</span> <span class="o">=</span> <span class="n">create_dummy_var</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">cat_ftres</span><span class="p">)</span>
-
-<span class="c1"># Adding numerical keys to identify both users and restaurants</span>
-<span class="n">sample</span><span class="p">,</span> <span class="n">df_users_id</span> <span class="o">=</span> <span class="n">add_numerical_id</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="s1">&#39;user_id&#39;</span><span class="p">,</span> <span class="s1">&#39;user_id_key&#39;</span><span class="p">)</span>
-<span class="n">sample</span><span class="p">,</span> <span class="n">df_rest_id</span> <span class="o">=</span> <span class="n">add_numerical_id</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="s1">&#39;business_id&#39;</span><span class="p">,</span> <span class="s1">&#39;business_id_key&#39;</span><span class="p">)</span>
-
-<span class="n">ftres_all</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;business_mean&#39;</span><span class="p">,</span>
- <span class="s1">&#39;business_bias&#39;</span><span class="p">,</span>
- <span class="s1">&#39;user_mean&#39;</span><span class="p">,</span>
- <span class="s1">&#39;user_bias&#39;</span><span class="p">,</span>
- <span class="s1">&#39;avg_review_stars&#39;</span><span class="p">,</span>
- <span class="s1">&#39;user_id_key&#39;</span><span class="p">,</span>
- <span class="s1">&#39;business_id_key&#39;</span><span class="p">,</span>
- <span class="s1">&#39;review_stars&#39;</span><span class="p">,</span>
- <span class="s1">&#39;user_id&#39;</span><span class="p">,</span>
- <span class="s1">&#39;business_id&#39;</span><span class="p">,</span>
- <span class="s1">&#39;is_open_1&#39;</span><span class="p">,</span>
- <span class="s1">&#39;state_BW&#39;</span><span class="p">,</span>
- <span class="s1">&#39;state_C&#39;</span><span class="p">,</span>
- <span class="s1">&#39;state_EDH&#39;</span><span class="p">,</span>        
- <span class="s1">&#39;state_FIF&#39;</span><span class="p">,</span>
- <span class="s1">&#39;state_HLD&#39;</span><span class="p">,</span>
- <span class="s1">&#39;state_IL&#39;</span><span class="p">,</span>
- <span class="s1">&#39;state_MLN&#39;</span><span class="p">,</span>
- <span class="s1">&#39;state_NC&#39;</span><span class="p">,</span>
- <span class="s1">&#39;state_NV&#39;</span><span class="p">,</span>
- <span class="s1">&#39;state_NYK&#39;</span><span class="p">,</span>
- <span class="s1">&#39;state_OH&#39;</span><span class="p">,</span>
- <span class="s1">&#39;state_ON&#39;</span><span class="p">,</span>
- <span class="s1">&#39;state_PA&#39;</span><span class="p">,</span>
- <span class="s1">&#39;state_QC&#39;</span><span class="p">,</span>
- <span class="s1">&#39;state_SC&#39;</span><span class="p">,</span>
- <span class="s1">&#39;state_WI&#39;</span><span class="p">,</span>
- <span class="s1">&#39;state_WLN&#39;</span><span class="p">,</span>
- <span class="s1">&#39;Fast Food_True&#39;</span><span class="p">,</span>
- <span class="s1">&#39;Sandwiches_True&#39;</span><span class="p">,</span>
- <span class="s1">&#39;Coffee &amp; Tea_True&#39;</span><span class="p">,</span>
- <span class="s1">&#39;Burgers_True&#39;</span><span class="p">,</span>
- <span class="s1">&#39;user_elite_flag_True&#39;</span><span class="p">,</span>
- <span class="s1">&#39;user_friends_flag_True&#39;</span><span class="p">]</span>
-</pre></div>
-
-</div>
-</div>
-</div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered">
@@ -20371,18 +20212,18 @@ $${\mathit{R}\mathit{M}\mathit{S}\mathit{E}} = \sqrt{\frac{1}{N}\sum(x_{i} - \ha
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Approach-1:">Approach 1:<a class="anchor-link" href="#Approach-1:">&#182;</a></h3><p>These next two functions will be applied to the dataframes iteratively. That is, we will loop through possible lambda2 and lambda3 values, and use cross-validation to determine which combination is optimal.</p>
-<p>These functions are defined here, but are not applied until Step 3, where we cross-validate.</p>
+<h3 id="Approach-1:-Obtain-user-and-restaurant-bias-by-using-formulas-given-by-Koren-and-Bell.">Approach 1: Obtain user and restaurant bias by using formulas given by Koren and Bell.<a class="anchor-link" href="#Approach-1:-Obtain-user-and-restaurant-bias-by-using-formulas-given-by-Koren-and-Bell.">&#182;</a></h3><p>For this approach, we created the next two functions. Using these functions, we looped through possible user bias and restaurant bias values, and used cross-validation to determine which combination is optimal.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">get_restaurant_offsets</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">rating</span><span class="p">,</span> <span class="n">bus_id</span><span class="p">,</span> <span class="n">bus_avg</span><span class="p">,</span> <span class="n">lambda2</span><span class="p">):</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># show</span>
+<span class="k">def</span> <span class="nf">get_restaurant_offsets</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">rating</span><span class="p">,</span> <span class="n">bus_id</span><span class="p">,</span> <span class="n">bus_avg</span><span class="p">,</span> <span class="n">lambda2</span><span class="p">):</span>
     <span class="n">overall_avg</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">rating</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
     
     <span class="c1">#top of equation</span>
@@ -20411,10 +20252,11 @@ $${\mathit{R}\mathit{M}\mathit{S}\mathit{E}} = \sqrt{\frac{1}{N}\sum(x_{i} - \ha
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">get_user_offsets</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">rating</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">user_avg</span><span class="p">,</span> <span class="n">lambda3</span><span class="p">):</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># show</span>
+<span class="k">def</span> <span class="nf">get_user_offsets</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">rating</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">user_avg</span><span class="p">,</span> <span class="n">lambda3</span><span class="p">):</span>
     <span class="n">overall_avg</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">rating</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
     
     <span class="c1">#top of equation</span>
@@ -20447,370 +20289,33 @@ $${\mathit{R}\mathit{M}\mathit{S}\mathit{E}} = \sqrt{\frac{1}{N}\sum(x_{i} - \ha
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Approach-2:">Approach 2:<a class="anchor-link" href="#Approach-2:">&#182;</a></h3>
+<h3 id="Approach-2:-Use-Ridge-regression-for-optimizing-the-bias-terms">Approach 2: Use Ridge regression for optimizing the bias terms<a class="anchor-link" href="#Approach-2:-Use-Ridge-regression-for-optimizing-the-bias-terms">&#182;</a></h3>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">add_bias</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">var_name</span><span class="p">,</span> <span class="n">quant_var</span><span class="p">):</span>
-    <span class="n">overall_avg</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">quant_var</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-    <span class="n">df_bias</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()[[</span><span class="n">var</span><span class="p">,</span> <span class="n">quant_var</span><span class="p">]]</span>
-    <span class="n">var_mean</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">var_name</span><span class="o">+</span><span class="s1">&#39;_mean&#39;</span><span class="p">)</span>
-    <span class="n">var_bias</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">var_name</span><span class="o">+</span><span class="s1">&#39;_bias&#39;</span><span class="p">)</span>
-    <span class="n">df_bias</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="n">quant_var</span><span class="p">:</span><span class="n">var_mean</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> 
-    <span class="n">df_f</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_bias</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="n">var</span><span class="p">)</span>
-    <span class="n">df_f</span><span class="p">[</span><span class="n">var_bias</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_f</span><span class="p">[</span><span class="n">var_mean</span><span class="p">]</span> <span class="o">-</span> <span class="n">overall_avg</span>
-    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;avg_review_stars&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">overall_avg</span>
-    <span class="k">return</span> <span class="n">df_f</span>
+<div class=" highlight hl-ipython3"><pre><span></span> 
 </pre></div>
 
 </div>
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="baseline-model:-comparison-of-approaches-1-&amp;-2">baseline model: comparison of approaches 1 &amp; 2<a class="anchor-link" href="#baseline-model:-comparison-of-approaches-1-&amp;-2">&#182;</a></h3>
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">create_set()</span>
-<span class="sd">-this variable transforms the training and test set into a matrix </span>
-<span class="sd">suitable for this regression</span>
-
-<span class="sd">inputs: training dataset, test dataset, response variables, predictor features,</span>
-<span class="sd">        index of category features</span>
-
-<span class="sd">outputs: altered dataframe suitable for this regression</span>
-
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="k">def</span> <span class="nf">create_set</span><span class="p">(</span><span class="n">df_train</span><span class="p">,</span> <span class="n">df_test</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">ftres</span><span class="p">,</span> <span class="n">cat_ftres_index</span><span class="p">):</span>
-    <span class="n">dataset</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;response&#39;</span><span class="p">]</span>      <span class="o">=</span> <span class="n">response</span>
-    <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;ftres&#39;</span><span class="p">]</span>         <span class="o">=</span> <span class="n">ftres</span>
-    
-    <span class="c1"># Response variable</span>
-    <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;y_train&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">df_train</span><span class="p">[</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;response&#39;</span><span class="p">]])</span>
-    <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;y_test&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">df_test</span><span class="p">[</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;response&#39;</span><span class="p">]])</span>
-    
-    <span class="k">assert</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">ftres</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span> <span class="ow">or</span> <span class="nb">type</span><span class="p">(</span><span class="n">ftres</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">ftres</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span><span class="p">:</span>
-        <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;X_train&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_train</span><span class="p">[</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;ftres&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
-        <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;X_test&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">df_test</span><span class="p">[</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;ftres&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>        
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;X_train&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_train</span><span class="p">[</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;ftres&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;X_test&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">df_test</span><span class="p">[</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;ftres&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-    
-    <span class="c1"># All values must be float</span>
-    <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;X_train&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;X_train&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
-    <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;X_test&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;X_test&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
-    <span class="n">X_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;X_train&#39;</span><span class="p">],</span> <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;X_test&#39;</span><span class="p">]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    
-    <span class="c1"># Encode categorical variables in a sparse matrix</span>
-    <span class="n">encoder</span> <span class="o">=</span> <span class="n">OneHotEncoder</span><span class="p">(</span><span class="n">categorical_features</span><span class="o">=</span><span class="n">cat_ftres_index</span><span class="p">,</span> <span class="n">sparse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">encoder</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_all</span><span class="p">)</span>
-    <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;X_train_sparse&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;X_train&#39;</span><span class="p">])</span>
-    <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;X_test_sparse&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;X_test&#39;</span><span class="p">])</span>    
-    <span class="k">return</span> <span class="n">dataset</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">boundaries_stars</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">5</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">train_and_predict_model()</span>
-<span class="sd">-this function takes a model, dataframe, and predictor/response information.</span>
-<span class="sd"> it then fits the model and reports various scores of interest</span>
-<span class="sd"> </span>
-<span class="sd">inputs: regression model, dataframe/predictor/response information that is stored in a **set** variable</span>
-<span class="sd">outputs: dictionary of relevant scores</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="k">def</span> <span class="nf">train_and_predict_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">input_set</span><span class="p">):</span>
-    
-    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-    <span class="c1"># Dictionary to save all the results</span>
-    <span class="n">m</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-    
-    <span class="c1">#initialize x and y for regression</span>
-    <span class="n">m</span><span class="p">[</span><span class="s1">&#39;X_train&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">input_set</span><span class="p">[</span><span class="s1">&#39;X_train&#39;</span><span class="p">]</span>
-    <span class="n">m</span><span class="p">[</span><span class="s1">&#39;y_train&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">input_set</span><span class="p">[</span><span class="s1">&#39;y_train&#39;</span><span class="p">]</span>
-    
-    <span class="n">m</span><span class="p">[</span><span class="s1">&#39;X_test&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">input_set</span><span class="p">[</span><span class="s1">&#39;X_test&#39;</span><span class="p">]</span>
-    <span class="n">m</span><span class="p">[</span><span class="s1">&#39;y_test&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">input_set</span><span class="p">[</span><span class="s1">&#39;y_test&#39;</span><span class="p">]</span>
-    
-    <span class="c1"># Fit the model with sparse matrix</span>
-    <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">input_set</span><span class="p">[</span><span class="s1">&#39;X_train_sparse&#39;</span><span class="p">],</span> <span class="n">m</span><span class="p">[</span><span class="s1">&#39;y_train&#39;</span><span class="p">])</span>
-    
-    <span class="c1"># Predict the values with the model in the training and test set </span>
-    <span class="c1"># restricting the values to the range (1,5)</span>
-    <span class="n">limit_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">boundaries_stars</span><span class="p">)</span>
-    <span class="n">m</span><span class="p">[</span><span class="s1">&#39;y_hat_train&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">limit_values</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">input_set</span><span class="p">[</span><span class="s1">&#39;X_train_sparse&#39;</span><span class="p">]))</span>
-    <span class="n">m</span><span class="p">[</span><span class="s1">&#39;y_hat_test&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">limit_values</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">input_set</span><span class="p">[</span><span class="s1">&#39;X_test_sparse&#39;</span><span class="p">]))</span>
-    
-    <span class="c1"># Parameter of goodness of fit: MSE</span>
-    <span class="n">m</span><span class="p">[</span><span class="s1">&#39;train_RMSE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="s1">&#39;y_train&#39;</span><span class="p">],</span> <span class="n">m</span><span class="p">[</span><span class="s1">&#39;y_hat_train&#39;</span><span class="p">]))</span>
-    <span class="n">m</span><span class="p">[</span><span class="s1">&#39;test_RMSE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="s1">&#39;y_test&#39;</span><span class="p">],</span> <span class="n">m</span><span class="p">[</span><span class="s1">&#39;y_hat_test&#39;</span><span class="p">]))</span>
-    
-    <span class="c1"># Parameter of goodness of fit: R2</span>
-    <span class="n">m</span><span class="p">[</span><span class="s1">&#39;train_r2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="s1">&#39;y_train&#39;</span><span class="p">],</span> <span class="n">m</span><span class="p">[</span><span class="s1">&#39;y_hat_train&#39;</span><span class="p">])</span>
-    <span class="n">m</span><span class="p">[</span><span class="s1">&#39;test_r2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="s1">&#39;y_test&#39;</span><span class="p">],</span> <span class="n">m</span><span class="p">[</span><span class="s1">&#39;y_hat_test&#39;</span><span class="p">])</span>
-    
-    <span class="n">size</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">m</span><span class="p">:</span> <span class="n">size</span><span class="o">+=</span><span class="n">sys</span><span class="o">.</span><span class="n">getsizeof</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
-    <span class="n">m</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">size</span>
-    <span class="n">m</span><span class="p">[</span><span class="s1">&#39;runtime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
-    <span class="k">return</span> <span class="n">m</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">cross_validate_lambda()</span>
-<span class="sd">-this function uses the method described in Step2-Option1 to return statistical information</span>
-<span class="sd">-for every lambda combination specified.</span>
-
-<span class="sd">inputs: dataframe, predictor features, response variable, rating variable name,</span>
-<span class="sd">        business_id column, business_average column,</span>
-<span class="sd">        user_id column, user_average column,</span>
-<span class="sd">        parameter dictionary specificying which lambda values to loop through,</span>
-<span class="sd">        amount of folds to perform in cross-validation</span>
-<span class="sd">        </span>
-<span class="sd">outputs: dictionary storing the mean results from N-Fold cross validation in the following areas:</span>
-<span class="sd">         -train_r2</span>
-<span class="sd">         -train_RMSE</span>
-<span class="sd">         -test_r2</span>
-<span class="sd">         -test_RMSE</span>
-
-<span class="sd">&quot;&quot;&quot;</span>
-
-<span class="k">def</span> <span class="nf">cross_validate_lambda</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">ftres_all</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">rating</span><span class="p">,</span> <span class="n">bus_id</span><span class="p">,</span> <span class="n">bus_avg</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">user_avg</span><span class="p">,</span>
-                          <span class="n">param_dict</span><span class="p">,</span> <span class="n">nfolds</span><span class="p">):</span>
-    
-    <span class="n">scoreDict</span><span class="o">=</span><span class="p">{}</span>
-    <span class="k">for</span> <span class="n">lambda2</span><span class="p">,</span> <span class="n">lambda3</span> <span class="ow">in</span> <span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="n">param_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
-        <span class="n">join1</span> <span class="o">=</span> <span class="n">get_restaurant_offsets</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">rating</span><span class="p">,</span> <span class="n">bus_id</span><span class="p">,</span> <span class="n">bus_avg</span><span class="p">,</span> <span class="n">lambda2</span><span class="p">)</span>
-        <span class="n">join2</span> <span class="o">=</span> <span class="n">get_user_offsets</span><span class="p">(</span><span class="n">join1</span><span class="p">,</span> <span class="n">rating</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">user_avg</span><span class="p">,</span> <span class="n">lambda3</span><span class="p">)</span>
-        
-        <span class="n">sets</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="c1">#return ftres_all</span>
-
-        
-        <span class="n">train_r2</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">test_r2</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">train_RMSE</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">test_RMSE</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">f_train</span><span class="p">,</span> <span class="n">f_val</span> <span class="ow">in</span> <span class="n">KFold</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="n">nfolds</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">9001</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">join2</span><span class="o">.</span><span class="n">index</span><span class="p">):</span>
-            <span class="n">train_split</span> <span class="o">=</span> <span class="n">join2</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">f_train</span><span class="p">]</span>
-            <span class="n">val_split</span> <span class="o">=</span> <span class="n">join2</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">f_val</span><span class="p">]</span>
-            
-            <span class="n">sets</span><span class="p">[</span><span class="s1">&#39;bsln&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">create_set</span><span class="p">(</span><span class="n">train_split</span><span class="p">,</span> <span class="n">val_split</span><span class="p">,</span> <span class="s1">&#39;review_stars&#39;</span><span class="p">,</span> <span class="n">ftres_all</span><span class="p">,</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">])</span>
-            
-            <span class="n">allScores</span> <span class="o">=</span> <span class="n">train_and_predict_model</span><span class="p">(</span><span class="n">LinearRegression</span><span class="p">(),</span> <span class="n">sets</span><span class="p">[</span><span class="s1">&#39;bsln&#39;</span><span class="p">])</span>
-            
-            <span class="n">train_r2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">allScores</span><span class="p">[</span><span class="s1">&#39;train_r2&#39;</span><span class="p">])</span>
-            <span class="n">train_RMSE</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">allScores</span><span class="p">[</span><span class="s1">&#39;train_RMSE&#39;</span><span class="p">])</span>
-            
-            <span class="n">test_r2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">allScores</span><span class="p">[</span><span class="s1">&#39;test_r2&#39;</span><span class="p">])</span>
-            <span class="n">test_RMSE</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">allScores</span><span class="p">[</span><span class="s1">&#39;test_RMSE&#39;</span><span class="p">])</span>
-        <span class="n">scoreDict</span><span class="p">[</span><span class="n">lambda2</span><span class="p">,</span> <span class="n">lambda3</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;train_r2&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">train_r2</span><span class="p">),</span>
-                                       <span class="s1">&#39;train_RMSE&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">train_RMSE</span><span class="p">),</span>
-                                       <span class="s1">&#39;test_r2&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">test_r2</span><span class="p">),</span>
-                                       <span class="s1">&#39;test_RMSE&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">test_RMSE</span><span class="p">)}</span>
-        
-
-    <span class="k">return</span> <span class="n">scoreDict</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">param_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="n">lambda2</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="mi">5</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)],</span>
-                        <span class="n">lambda3</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="mi">5</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)])</span>
-
-<span class="n">Step2_Option1_Results</span> <span class="o">=</span> <span class="n">cross_validate_lambda</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">sample</span><span class="p">,</span> <span class="n">ftres_all</span><span class="o">=</span><span class="n">ftres_all</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;review_stars&#39;</span><span class="p">],</span> 
-                                     <span class="n">rating</span><span class="o">=</span><span class="s1">&#39;review_stars&#39;</span><span class="p">,</span> <span class="n">bus_id</span><span class="o">=</span><span class="s1">&#39;business_id&#39;</span><span class="p">,</span> <span class="n">bus_avg</span><span class="o">=</span><span class="s1">&#39;stars&#39;</span><span class="p">,</span> 
-                                     <span class="n">user_id</span><span class="o">=</span><span class="s1">&#39;user_id&#39;</span><span class="p">,</span> <span class="n">user_avg</span><span class="o">=</span><span class="s1">&#39;user_average_stars&#39;</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">param_dict</span><span class="p">,</span> <span class="n">nfolds</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_text output_error">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">KeyError</span>                                  Traceback (most recent call last)
-<span class="ansi-green-fg">&lt;ipython-input-15-a051a5ac52c5&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span><span class="ansi-blue-fg">()</span>
-<span class="ansi-green-intense-fg ansi-bold">      4</span> Step2_Option1_Results = cross_validate_lambda(df=sample, ftres_all=ftres_all, response=[&#39;review_stars&#39;], 
-<span class="ansi-green-intense-fg ansi-bold">      5</span>                                      rating<span class="ansi-blue-fg">=</span><span class="ansi-blue-fg">&#39;review_stars&#39;</span><span class="ansi-blue-fg">,</span> bus_id<span class="ansi-blue-fg">=</span><span class="ansi-blue-fg">&#39;business_id&#39;</span><span class="ansi-blue-fg">,</span> bus_avg<span class="ansi-blue-fg">=</span><span class="ansi-blue-fg">&#39;stars&#39;</span><span class="ansi-blue-fg">,</span>
-<span class="ansi-green-fg">----&gt; 6</span><span class="ansi-red-fg">                                      user_id=&#39;user_id&#39;, user_avg=&#39;user_average_stars&#39;, param_dict=param_dict, nfolds=5)
-</span>
-<span class="ansi-green-fg">&lt;ipython-input-14-64c8f730bd83&gt;</span> in <span class="ansi-cyan-fg">cross_validate_lambda</span><span class="ansi-blue-fg">(df, ftres_all, response, rating, bus_id, bus_avg, user_id, user_avg, param_dict, nfolds)</span>
-<span class="ansi-green-intense-fg ansi-bold">     38</span>             val_split <span class="ansi-blue-fg">=</span> join2<span class="ansi-blue-fg">.</span>iloc<span class="ansi-blue-fg">[</span>f_val<span class="ansi-blue-fg">]</span>
-<span class="ansi-green-intense-fg ansi-bold">     39</span> 
-<span class="ansi-green-fg">---&gt; 40</span><span class="ansi-red-fg">             </span>sets<span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">&#39;bsln&#39;</span><span class="ansi-blue-fg">]</span> <span class="ansi-blue-fg">=</span> create_set<span class="ansi-blue-fg">(</span>train_split<span class="ansi-blue-fg">,</span> val_split<span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">&#39;review_stars&#39;</span><span class="ansi-blue-fg">,</span> ftres_all<span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">[</span><span class="ansi-cyan-fg">5</span><span class="ansi-blue-fg">,</span><span class="ansi-cyan-fg">6</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">     41</span> 
-<span class="ansi-green-intense-fg ansi-bold">     42</span>             allScores <span class="ansi-blue-fg">=</span> train_and_predict_model<span class="ansi-blue-fg">(</span>LinearRegression<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">,</span> sets<span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">&#39;bsln&#39;</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">)</span>
-
-<span class="ansi-green-fg">&lt;ipython-input-11-41d197f1e517&gt;</span> in <span class="ansi-cyan-fg">create_set</span><span class="ansi-blue-fg">(df_train, df_test, response, ftres, cat_ftres_index)</span>
-<span class="ansi-green-intense-fg ansi-bold">     21</span>     <span class="ansi-green-fg">assert</span> <span class="ansi-blue-fg">(</span>type<span class="ansi-blue-fg">(</span>ftres<span class="ansi-blue-fg">)</span> <span class="ansi-blue-fg">==</span> str <span class="ansi-green-fg">or</span> type<span class="ansi-blue-fg">(</span>ftres<span class="ansi-blue-fg">)</span> <span class="ansi-blue-fg">==</span> list<span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">     22</span>     <span class="ansi-green-fg">if</span> type<span class="ansi-blue-fg">(</span>ftres<span class="ansi-blue-fg">)</span> <span class="ansi-blue-fg">==</span> list<span class="ansi-blue-fg">:</span>
-<span class="ansi-green-fg">---&gt; 23</span><span class="ansi-red-fg">         </span>dataset<span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">&#39;X_train&#39;</span><span class="ansi-blue-fg">]</span> <span class="ansi-blue-fg">=</span> df_train<span class="ansi-blue-fg">[</span>dataset<span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">&#39;ftres&#39;</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">.</span>values
-<span class="ansi-green-intense-fg ansi-bold">     24</span>         dataset<span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">&#39;X_test&#39;</span><span class="ansi-blue-fg">]</span>  <span class="ansi-blue-fg">=</span> df_test<span class="ansi-blue-fg">[</span>dataset<span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">&#39;ftres&#39;</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">.</span>values
-<span class="ansi-green-intense-fg ansi-bold">     25</span>     <span class="ansi-green-fg">else</span><span class="ansi-blue-fg">:</span>
-
-<span class="ansi-green-fg">//anaconda/envs/snakes/lib/python3.5/site-packages/pandas/core/frame.py</span> in <span class="ansi-cyan-fg">__getitem__</span><span class="ansi-blue-fg">(self, key)</span>
-<span class="ansi-green-intense-fg ansi-bold">   1956</span>         <span class="ansi-green-fg">if</span> isinstance<span class="ansi-blue-fg">(</span>key<span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">(</span>Series<span class="ansi-blue-fg">,</span> np<span class="ansi-blue-fg">.</span>ndarray<span class="ansi-blue-fg">,</span> Index<span class="ansi-blue-fg">,</span> list<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
-<span class="ansi-green-intense-fg ansi-bold">   1957</span>             <span class="ansi-red-fg"># either boolean or fancy integer index</span>
-<span class="ansi-green-fg">-&gt; 1958</span><span class="ansi-red-fg">             </span><span class="ansi-green-fg">return</span> self<span class="ansi-blue-fg">.</span>_getitem_array<span class="ansi-blue-fg">(</span>key<span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">   1959</span>         <span class="ansi-green-fg">elif</span> isinstance<span class="ansi-blue-fg">(</span>key<span class="ansi-blue-fg">,</span> DataFrame<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
-<span class="ansi-green-intense-fg ansi-bold">   1960</span>             <span class="ansi-green-fg">return</span> self<span class="ansi-blue-fg">.</span>_getitem_frame<span class="ansi-blue-fg">(</span>key<span class="ansi-blue-fg">)</span>
-
-<span class="ansi-green-fg">//anaconda/envs/snakes/lib/python3.5/site-packages/pandas/core/frame.py</span> in <span class="ansi-cyan-fg">_getitem_array</span><span class="ansi-blue-fg">(self, key)</span>
-<span class="ansi-green-intense-fg ansi-bold">   2000</span>             <span class="ansi-green-fg">return</span> self<span class="ansi-blue-fg">.</span>take<span class="ansi-blue-fg">(</span>indexer<span class="ansi-blue-fg">,</span> axis<span class="ansi-blue-fg">=</span><span class="ansi-cyan-fg">0</span><span class="ansi-blue-fg">,</span> convert<span class="ansi-blue-fg">=</span><span class="ansi-green-fg">False</span><span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">   2001</span>         <span class="ansi-green-fg">else</span><span class="ansi-blue-fg">:</span>
-<span class="ansi-green-fg">-&gt; 2002</span><span class="ansi-red-fg">             </span>indexer <span class="ansi-blue-fg">=</span> self<span class="ansi-blue-fg">.</span>loc<span class="ansi-blue-fg">.</span>_convert_to_indexer<span class="ansi-blue-fg">(</span>key<span class="ansi-blue-fg">,</span> axis<span class="ansi-blue-fg">=</span><span class="ansi-cyan-fg">1</span><span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">   2003</span>             <span class="ansi-green-fg">return</span> self<span class="ansi-blue-fg">.</span>take<span class="ansi-blue-fg">(</span>indexer<span class="ansi-blue-fg">,</span> axis<span class="ansi-blue-fg">=</span><span class="ansi-cyan-fg">1</span><span class="ansi-blue-fg">,</span> convert<span class="ansi-blue-fg">=</span><span class="ansi-green-fg">True</span><span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">   2004</span> 
-
-<span class="ansi-green-fg">//anaconda/envs/snakes/lib/python3.5/site-packages/pandas/core/indexing.py</span> in <span class="ansi-cyan-fg">_convert_to_indexer</span><span class="ansi-blue-fg">(self, obj, axis, is_setter)</span>
-<span class="ansi-green-intense-fg ansi-bold">   1229</span>                 mask <span class="ansi-blue-fg">=</span> check <span class="ansi-blue-fg">==</span> <span class="ansi-blue-fg">-</span><span class="ansi-cyan-fg">1</span>
-<span class="ansi-green-intense-fg ansi-bold">   1230</span>                 <span class="ansi-green-fg">if</span> mask<span class="ansi-blue-fg">.</span>any<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
-<span class="ansi-green-fg">-&gt; 1231</span><span class="ansi-red-fg">                     </span><span class="ansi-green-fg">raise</span> KeyError<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">&#39;%s not in index&#39;</span> <span class="ansi-blue-fg">%</span> objarr<span class="ansi-blue-fg">[</span>mask<span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">   1232</span> 
-<span class="ansi-green-intense-fg ansi-bold">   1233</span>                 <span class="ansi-green-fg">return</span> _values_from_object<span class="ansi-blue-fg">(</span>indexer<span class="ansi-blue-fg">)</span>
-
-<span class="ansi-red-fg">KeyError</span>: &#34;[&#39;business_mean&#39; &#39;user_mean&#39; &#39;is_open_1&#39; &#39;state_FIF&#39;] not in index&#34;</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">Step2_Option1_Results_DF</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">Step2_Option1_Results</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">Step2_Option1_Results_DF</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;test_r2&#39;</span><span class="p">,:]</span><span class="o">.</span><span class="n">idxmax</span><span class="p">())</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">Step2_Option1_Results_DF</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;test_RMSE&#39;</span><span class="p">,:]</span><span class="o">.</span><span class="n">idxmin</span><span class="p">())</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>(lambda2,lambda3) values of (0,0) return the highest test r-squared and the lowest test RMSE.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># show</span>
-<span class="n">Step2_Option1_Results_DF</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)]</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">Step2_Option2_DF</span> <span class="o">=</span> <span class="n">add_bias</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="s1">&#39;business_id&#39;</span><span class="p">,</span> <span class="s1">&#39;business&#39;</span><span class="p">,</span> <span class="s1">&#39;review_stars&#39;</span><span class="p">)</span>
-<span class="n">Step2_Option2_DF</span> <span class="o">=</span> <span class="n">add_bias</span><span class="p">(</span><span class="n">Step2_Option2_DF</span><span class="p">,</span> <span class="s1">&#39;user_id&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="s1">&#39;review_stars&#39;</span><span class="p">)</span>
-
-<span class="c1">#Step2_Option2_DF.drop([&#39;business_id&#39;,&#39;user_id&#39;,&#39;review_stars&#39;],axis=1,inplace=True)        </span>
-<span class="n">ftres_all</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;business_id&#39;</span><span class="p">)</span>
-<span class="n">ftres_all</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;user_id&#39;</span><span class="p">)</span>
-<span class="n">ftres_all</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;review_stars&#39;</span><span class="p">)</span>
-
-<span class="n">df_train</span><span class="p">,</span> <span class="n">df_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">Step2_Option2_DF</span><span class="p">[</span><span class="n">ftres_all</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;review_stars&#39;</span><span class="p">]],</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">777</span><span class="p">)</span>
-<span class="n">sets</span><span class="o">=</span><span class="p">{}</span>
-<span class="n">sets</span><span class="p">[</span><span class="s1">&#39;bsln&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">create_set</span><span class="p">(</span><span class="n">df_train</span><span class="p">,</span> <span class="n">df_test</span><span class="p">,</span> <span class="s1">&#39;review_stars&#39;</span><span class="p">,</span> <span class="n">ftres_all</span><span class="p">,</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">])</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">cv_optimize</span><span class="p">(</span><span class="n">clf</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">Xtrain</span><span class="p">,</span> <span class="n">ytrain</span><span class="p">,</span> <span class="n">n_folds</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">cv_optimize</span><span class="p">(</span><span class="n">clf</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">Xtrain</span><span class="p">,</span> <span class="n">ytrain</span><span class="p">,</span> <span class="n">n_folds</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">scoring</span><span class="p">:</span>
         <span class="n">gs</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span><span class="n">clf</span><span class="p">,</span> <span class="n">param_grid</span><span class="o">=</span><span class="n">parameters</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">n_folds</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -20845,12 +20350,181 @@ $${\mathit{R}\mathit{M}\mathit{S}\mathit{E}} = \sqrt{\frac{1}{N}\sum(x_{i} - \ha
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-<span class="n">alphas</span> <span class="o">=</span> <span class="p">[</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,]</span>
+<div class=" highlight hl-ipython3"><pre><span></span> 
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Baseline-model:-Comparison-of-approaches-1-&amp;-2">Baseline model: Comparison of approaches 1 &amp; 2<a class="anchor-link" href="#Baseline-model:-Comparison-of-approaches-1-&amp;-2">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Approach-1-results:">Approach 1 results:<a class="anchor-link" href="#Approach-1-results:">&#182;</a></h4><p>(lambda2,lambda3) values of (30,45) return the lowest test RMSE, so we will use those values on a 75/25 train/test split to determine accuracy on the sample set.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># show</span>
+<span class="n">Step2_Option1_Results_DF</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">Step2_Option1_CV_Results</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">Step2_Option1_Results_DF</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;test_RMSE&#39;</span><span class="p">,:]</span><span class="o">.</span><span class="n">idxmin</span><span class="p">())</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>(30, 45)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[26]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># show</span>
+<span class="n">Step2_Option1_Final_Results</span> <span class="o">=</span> <span class="n">create_optimal_model</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">sample_df</span><span class="p">,</span> <span class="n">ftres_all</span><span class="o">=</span><span class="n">sample_ftres_all</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;review_stars&#39;</span><span class="p">],</span> 
+                                     <span class="n">rating</span><span class="o">=</span><span class="s1">&#39;review_stars&#39;</span><span class="p">,</span> <span class="n">bus_id</span><span class="o">=</span><span class="s1">&#39;business_id&#39;</span><span class="p">,</span> <span class="n">bus_avg</span><span class="o">=</span><span class="s1">&#39;stars&#39;</span><span class="p">,</span> 
+                                     <span class="n">user_id</span><span class="o">=</span><span class="s1">&#39;user_id&#39;</span><span class="p">,</span> <span class="n">user_avg</span><span class="o">=</span><span class="s1">&#39;user_average_stars&#39;</span><span class="p">,</span><span class="n">lambda2</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span><span class="n">lambda3</span><span class="o">=</span><span class="mi">45</span><span class="p">)</span>
+
+<span class="n">Step2_Option1_Final_Results</span><span class="p">[</span><span class="s1">&#39;test_RMSE&#39;</span><span class="p">]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_text output_error">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">KeyError</span>                                  Traceback (most recent call last)
+<span class="ansi-green-fg">&lt;ipython-input-26-b610d5b2b23c&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span><span class="ansi-blue-fg">()</span>
+<span class="ansi-green-intense-fg ansi-bold">      2</span> Step2_Option1_Final_Results = create_optimal_model(df=sample_df, ftres_all=sample_ftres_all, response=[&#39;review_stars&#39;], 
+<span class="ansi-green-intense-fg ansi-bold">      3</span>                                      rating<span class="ansi-blue-fg">=</span><span class="ansi-blue-fg">&#39;review_stars&#39;</span><span class="ansi-blue-fg">,</span> bus_id<span class="ansi-blue-fg">=</span><span class="ansi-blue-fg">&#39;business_id&#39;</span><span class="ansi-blue-fg">,</span> bus_avg<span class="ansi-blue-fg">=</span><span class="ansi-blue-fg">&#39;stars&#39;</span><span class="ansi-blue-fg">,</span>
+<span class="ansi-green-fg">----&gt; 4</span><span class="ansi-red-fg">                                      user_id=&#39;user_id&#39;, user_avg=&#39;user_average_stars&#39;,lambda2=30,lambda3=45)
+</span><span class="ansi-green-intense-fg ansi-bold">      5</span> 
+<span class="ansi-green-intense-fg ansi-bold">      6</span> Step2_Option1_Final_Results<span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">&#39;test_RMSE&#39;</span><span class="ansi-blue-fg">]</span>
+
+<span class="ansi-green-fg">&lt;ipython-input-16-0c74622ba064&gt;</span> in <span class="ansi-cyan-fg">create_optimal_model</span><span class="ansi-blue-fg">(df, ftres_all, response, rating, bus_id, bus_avg, user_id, user_avg, lambda2, lambda3)</span>
+<span class="ansi-green-intense-fg ansi-bold">     61</span>     train_split<span class="ansi-blue-fg">,</span> test_split <span class="ansi-blue-fg">=</span> train_test_split<span class="ansi-blue-fg">(</span>join2<span class="ansi-blue-fg">,</span> test_size<span class="ansi-blue-fg">=</span><span class="ansi-cyan-fg">0.25</span><span class="ansi-blue-fg">,</span> random_state<span class="ansi-blue-fg">=</span><span class="ansi-cyan-fg">777</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">     62</span> 
+<span class="ansi-green-fg">---&gt; 63</span><span class="ansi-red-fg">     </span>sets<span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">&#39;bsln&#39;</span><span class="ansi-blue-fg">]</span> <span class="ansi-blue-fg">=</span> create_set<span class="ansi-blue-fg">(</span>train_split<span class="ansi-blue-fg">,</span> test_split<span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">&#39;review_stars&#39;</span><span class="ansi-blue-fg">,</span> ftres_all<span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">[</span><span class="ansi-cyan-fg">5</span><span class="ansi-blue-fg">,</span><span class="ansi-cyan-fg">6</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">     64</span>     results <span class="ansi-blue-fg">=</span> train_and_predict_model<span class="ansi-blue-fg">(</span>LinearRegression<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">,</span> sets<span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">&#39;bsln&#39;</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">     65</span>     <span class="ansi-green-fg">return</span> results
+
+<span class="ansi-green-fg">&lt;ipython-input-13-41d197f1e517&gt;</span> in <span class="ansi-cyan-fg">create_set</span><span class="ansi-blue-fg">(df_train, df_test, response, ftres, cat_ftres_index)</span>
+<span class="ansi-green-intense-fg ansi-bold">     21</span>     <span class="ansi-green-fg">assert</span> <span class="ansi-blue-fg">(</span>type<span class="ansi-blue-fg">(</span>ftres<span class="ansi-blue-fg">)</span> <span class="ansi-blue-fg">==</span> str <span class="ansi-green-fg">or</span> type<span class="ansi-blue-fg">(</span>ftres<span class="ansi-blue-fg">)</span> <span class="ansi-blue-fg">==</span> list<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">     22</span>     <span class="ansi-green-fg">if</span> type<span class="ansi-blue-fg">(</span>ftres<span class="ansi-blue-fg">)</span> <span class="ansi-blue-fg">==</span> list<span class="ansi-blue-fg">:</span>
+<span class="ansi-green-fg">---&gt; 23</span><span class="ansi-red-fg">         </span>dataset<span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">&#39;X_train&#39;</span><span class="ansi-blue-fg">]</span> <span class="ansi-blue-fg">=</span> df_train<span class="ansi-blue-fg">[</span>dataset<span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">&#39;ftres&#39;</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">.</span>values
+<span class="ansi-green-intense-fg ansi-bold">     24</span>         dataset<span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">&#39;X_test&#39;</span><span class="ansi-blue-fg">]</span>  <span class="ansi-blue-fg">=</span> df_test<span class="ansi-blue-fg">[</span>dataset<span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">&#39;ftres&#39;</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">.</span>values
+<span class="ansi-green-intense-fg ansi-bold">     25</span>     <span class="ansi-green-fg">else</span><span class="ansi-blue-fg">:</span>
+
+<span class="ansi-green-fg">//anaconda/envs/snakes/lib/python3.5/site-packages/pandas/core/frame.py</span> in <span class="ansi-cyan-fg">__getitem__</span><span class="ansi-blue-fg">(self, key)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1956</span>         <span class="ansi-green-fg">if</span> isinstance<span class="ansi-blue-fg">(</span>key<span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">(</span>Series<span class="ansi-blue-fg">,</span> np<span class="ansi-blue-fg">.</span>ndarray<span class="ansi-blue-fg">,</span> Index<span class="ansi-blue-fg">,</span> list<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-intense-fg ansi-bold">   1957</span>             <span class="ansi-red-fg"># either boolean or fancy integer index</span>
+<span class="ansi-green-fg">-&gt; 1958</span><span class="ansi-red-fg">             </span><span class="ansi-green-fg">return</span> self<span class="ansi-blue-fg">.</span>_getitem_array<span class="ansi-blue-fg">(</span>key<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1959</span>         <span class="ansi-green-fg">elif</span> isinstance<span class="ansi-blue-fg">(</span>key<span class="ansi-blue-fg">,</span> DataFrame<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-intense-fg ansi-bold">   1960</span>             <span class="ansi-green-fg">return</span> self<span class="ansi-blue-fg">.</span>_getitem_frame<span class="ansi-blue-fg">(</span>key<span class="ansi-blue-fg">)</span>
+
+<span class="ansi-green-fg">//anaconda/envs/snakes/lib/python3.5/site-packages/pandas/core/frame.py</span> in <span class="ansi-cyan-fg">_getitem_array</span><span class="ansi-blue-fg">(self, key)</span>
+<span class="ansi-green-intense-fg ansi-bold">   2000</span>             <span class="ansi-green-fg">return</span> self<span class="ansi-blue-fg">.</span>take<span class="ansi-blue-fg">(</span>indexer<span class="ansi-blue-fg">,</span> axis<span class="ansi-blue-fg">=</span><span class="ansi-cyan-fg">0</span><span class="ansi-blue-fg">,</span> convert<span class="ansi-blue-fg">=</span><span class="ansi-green-fg">False</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">   2001</span>         <span class="ansi-green-fg">else</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-fg">-&gt; 2002</span><span class="ansi-red-fg">             </span>indexer <span class="ansi-blue-fg">=</span> self<span class="ansi-blue-fg">.</span>loc<span class="ansi-blue-fg">.</span>_convert_to_indexer<span class="ansi-blue-fg">(</span>key<span class="ansi-blue-fg">,</span> axis<span class="ansi-blue-fg">=</span><span class="ansi-cyan-fg">1</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">   2003</span>             <span class="ansi-green-fg">return</span> self<span class="ansi-blue-fg">.</span>take<span class="ansi-blue-fg">(</span>indexer<span class="ansi-blue-fg">,</span> axis<span class="ansi-blue-fg">=</span><span class="ansi-cyan-fg">1</span><span class="ansi-blue-fg">,</span> convert<span class="ansi-blue-fg">=</span><span class="ansi-green-fg">True</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">   2004</span> 
+
+<span class="ansi-green-fg">//anaconda/envs/snakes/lib/python3.5/site-packages/pandas/core/indexing.py</span> in <span class="ansi-cyan-fg">_convert_to_indexer</span><span class="ansi-blue-fg">(self, obj, axis, is_setter)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1229</span>                 mask <span class="ansi-blue-fg">=</span> check <span class="ansi-blue-fg">==</span> <span class="ansi-blue-fg">-</span><span class="ansi-cyan-fg">1</span>
+<span class="ansi-green-intense-fg ansi-bold">   1230</span>                 <span class="ansi-green-fg">if</span> mask<span class="ansi-blue-fg">.</span>any<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-fg">-&gt; 1231</span><span class="ansi-red-fg">                     </span><span class="ansi-green-fg">raise</span> KeyError<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">&#39;%s not in index&#39;</span> <span class="ansi-blue-fg">%</span> objarr<span class="ansi-blue-fg">[</span>mask<span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1232</span> 
+<span class="ansi-green-intense-fg ansi-bold">   1233</span>                 <span class="ansi-green-fg">return</span> _values_from_object<span class="ansi-blue-fg">(</span>indexer<span class="ansi-blue-fg">)</span>
+
+<span class="ansi-red-fg">KeyError</span>: &#34;[&#39;business_mean&#39; &#39;user_mean&#39;] not in index&#34;</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Approach-2-results:">Approach 2 results:<a class="anchor-link" href="#Approach-2-results:">&#182;</a></h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[23]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">alphas</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="n">e2</span><span class="p">,</span><span class="mi">1</span><span class="n">e3</span><span class="p">,</span> <span class="mi">1</span><span class="n">e4</span><span class="p">,</span> <span class="mi">1</span><span class="n">e5</span><span class="p">]</span>
 <span class="n">ridge</span> <span class="o">=</span> <span class="n">Ridge</span><span class="p">(</span><span class="n">fit_intercept</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">gs</span><span class="p">,</span> <span class="n">blsn2_alpha</span><span class="p">,</span><span class="n">train_r2</span><span class="p">,</span> <span class="n">test_r2</span><span class="p">,</span><span class="n">train_RMSE</span><span class="p">,</span> <span class="n">test_RMSE</span> <span class="o">=</span> <span class="n">cv_optimize_with_sets</span><span class="p">(</span><span class="n">ridge</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="n">alphas</span><span class="p">},</span>
                                                         <span class="n">sets</span><span class="p">[</span><span class="s1">&#39;bsln&#39;</span><span class="p">],</span> <span class="s2">&quot;Ridge Linear Regr Model&quot;</span><span class="p">,</span>
@@ -20862,6 +20536,30 @@ $${\mathit{R}\mathit{M}\mathit{S}\mathit{E}} = \sqrt{\frac{1}{N}\sum(x_{i} - \ha
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Ridge Linear Regr Model. Best parameter: alpha=100000.0.                   
+                 Train RMSE: 1.860. Test RSME: 1.850
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h5 id="We-see-that-our-first-method-of-regularization-(regularizing-by-introducing-a-lambda-term-in-the-demoniator)-gives-us-a-better-RMSE-score-than-using-the-Ridge-method-of-regularization.">We see that our first method of regularization (regularizing by introducing a lambda term in the demoniator) gives us a better RMSE score than using the Ridge method of regularization.<a class="anchor-link" href="#We-see-that-our-first-method-of-regularization-(regularizing-by-introducing-a-lambda-term-in-the-demoniator)-gives-us-a-better-RMSE-score-than-using-the-Ridge-method-of-regularization.">&#182;</a></h5>
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
