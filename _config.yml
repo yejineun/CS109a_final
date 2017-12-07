@@ -1,6 +1,6 @@
 theme: jekyll-theme-primer
-title: Support Vector Olives
-description: Keeping Italian Olives Pure!
+title: CS109a Final Project
+description: developing a restaurant recommendation engine for Yelp 
 baseurl:
 markdown: kramdown
 kramdown:
