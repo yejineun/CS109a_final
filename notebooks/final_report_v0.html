@@ -12854,59 +12854,12 @@ The business dataset had a variable, attributes, that was a string of a dictiona
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">reviews</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;data/restaurant_reviews_final.csv&#39;</span><span class="p">,</span><span class="n">encoding</span> <span class="o">=</span> <span class="s2">&quot;ISO-8859-1&quot;</span><span class="p">,</span><span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">num_reviews_per_var</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">group_var</span><span class="p">,</span> <span class="n">count_var</span><span class="p">,</span> <span class="n">max_count</span><span class="p">,</span> <span class="n">title_axis_x</span><span class="p">,</span> <span class="n">title_axis_y</span><span class="p">):</span>
-    <span class="n">num_review_per_var</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">group_var</span><span class="p">,</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()[[</span><span class="n">group_var</span><span class="p">,</span> <span class="n">count_var</span><span class="p">]]</span>
-    <span class="n">num_review_per_var</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;num_reviews_per_var&#39;</span>
-    <span class="n">reviews_per_var</span> <span class="o">=</span> <span class="n">num_review_per_var</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;num_reviews_per_var&#39;</span><span class="p">,</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
-    <span class="n">reviews_per_var</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;num_&#39;</span> <span class="o">+</span> <span class="n">group_var</span>
-    <span class="n">more_than_x</span> <span class="o">=</span> <span class="n">reviews_per_var</span><span class="p">[</span><span class="n">reviews_per_var</span><span class="p">[</span><span class="s1">&#39;num_reviews_per_var&#39;</span><span class="p">]</span><span class="o">&gt;=</span><span class="n">max_count</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
-    <span class="n">more_than_x</span><span class="p">[</span><span class="s1">&#39;num_reviews_per_var&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_count</span>
-    <span class="n">reviews_per_var</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">reviews_per_var</span><span class="p">[</span><span class="n">reviews_per_var</span><span class="p">[</span><span class="s1">&#39;num_reviews_per_var&#39;</span><span class="p">]</span><span class="o">&lt;</span><span class="n">max_count</span><span class="p">],</span>
-                                 <span class="n">more_than_x</span><span class="p">])</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">total_var</span> <span class="o">=</span> <span class="n">reviews_per_var</span><span class="p">[</span><span class="s1">&#39;num_&#39;</span> <span class="o">+</span> <span class="n">group_var</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-    <span class="n">reviews_per_var</span><span class="p">[</span><span class="s1">&#39;num_&#39;</span> <span class="o">+</span> <span class="n">group_var</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span><span class="o">*</span><span class="n">reviews_per_var</span><span class="p">[</span><span class="s1">&#39;num_&#39;</span> <span class="o">+</span> <span class="n">group_var</span><span class="p">]</span><span class="o">/</span><span class="n">total_var</span>
-    <span class="n">ax</span> <span class="o">=</span> <span class="n">reviews_per_var</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;num_reviews_per_var&#39;</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="s1">&#39;num_&#39;</span> <span class="o">+</span> <span class="n">group_var</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">)</span>    
-    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">title_axis_y</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">title_axis_x</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">mtick</span><span class="o">.</span><span class="n">FormatStrFormatter</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%2.0f%%</span><span class="s1">&#39;</span><span class="p">))</span>
-</pre></div>
-
-</div>
-</div>
-</div>
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.ticker</span> <span class="k">as</span> <span class="nn">mtick</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;whitegrid&quot;</span><span class="p">)</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">set_context</span><span class="p">(</span><span class="s1">&#39;paper&#39;</span><span class="p">,</span> <span class="n">rc</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;font.size&quot;</span><span class="p">:</span><span class="mi">20</span><span class="p">,</span><span class="s2">&quot;axes.titlesize&quot;</span><span class="p">:</span><span class="mi">20</span><span class="p">,</span> <span class="s2">&quot;axes.labelsize&quot;</span><span class="p">:</span><span class="mi">20</span><span class="p">,</span>
-                             <span class="s2">&quot;xtick.labelsize&quot;</span><span class="p">:</span><span class="mi">20</span><span class="p">,</span> <span class="s2">&quot;ytick.labelsize&quot;</span><span class="p">:</span><span class="mi">20</span><span class="p">})</span>
-</pre></div>
-
-</div>
-</div>
-</div>
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
@@ -12914,8 +12867,7 @@ The business dataset had a variable, attributes, that was a string of a dictiona
 <div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># show</span>
-<span class="n">num_reviews_per_var</span><span class="p">(</span><span class="n">reviews</span><span class="p">,</span> <span class="s1">&#39;user_id&#39;</span><span class="p">,</span> <span class="s1">&#39;review_id&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;num_reviews&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">% o</span><span class="s1">f users&#39;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">num_reviews_per_var</span><span class="p">(</span><span class="n">reviews</span><span class="p">,</span> <span class="s1">&#39;user_id&#39;</span><span class="p">,</span> <span class="s1">&#39;review_id&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;num_reviews&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">% o</span><span class="s1">f users&#39;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -13258,22 +13210,6 @@ EXAAACsRcAAAKxFwAAArEXAAACsRcAAAK/0AIj7NmhoPDMYAAAAASUVORK5CYII=
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">users</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;data/user_final.csv&#39;</span><span class="p">,</span><span class="n">encoding</span> <span class="o">=</span> <span class="s2">&quot;ISO-8859-1&quot;</span><span class="p">)</span>
-
-<span class="n">user_ftres</span> <span class="o">=</span> <span class="p">[</span><span class="n">user_ftre</span> <span class="k">for</span> <span class="n">user_ftre</span> <span class="ow">in</span> <span class="n">users</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="k">if</span> <span class="s1">&#39;user_&#39;</span> <span class="ow">in</span> <span class="n">user_ftre</span><span class="p">]</span>
-<span class="n">y_user</span> <span class="o">=</span> <span class="s1">&#39;user_average_stars&#39;</span>
-<span class="n">user_compl_ftres</span> <span class="o">=</span> <span class="p">[</span><span class="n">ftre</span> <span class="k">for</span> <span class="n">ftre</span> <span class="ow">in</span> <span class="n">user_ftres</span> <span class="k">if</span> <span class="s1">&#39;user_compliment&#39;</span> <span class="ow">in</span> <span class="n">ftre</span><span class="p">]</span>
-<span class="n">user_count_ftres</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;user_cool&#39;</span><span class="p">,</span> <span class="s1">&#39;user_fans&#39;</span><span class="p">,</span> <span class="s1">&#39;user_funny&#39;</span><span class="p">,</span> <span class="s1">&#39;user_review_count&#39;</span><span class="p">,</span> <span class="s1">&#39;user_useful&#39;</span><span class="p">]</span>
-<span class="n">user_cat_ftres</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;user_elite_flag&#39;</span><span class="p">,</span> <span class="s1">&#39;user_friends_flag&#39;</span><span class="p">,</span> <span class="s1">&#39;yelping_since&#39;</span><span class="p">]</span>
-</pre></div>
-
-</div>
-</div>
-</div>
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
@@ -13281,8 +13217,7 @@ EXAAACsRcAAAKxFwAAArEXAAACsRcAAAK/0AIj7NmhoPDMYAAAAASUVORK5CYII=
 <div class="prompt input_prompt">In&nbsp;[21]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># show</span>
-<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
 <span class="n">users</span><span class="p">[</span><span class="n">y_user</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;hist&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Users Average Stars&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -13562,8 +13497,7 @@ TZmkJUmqqf8Ph5E3A1GVnMYAAAAASUVORK5CYII=
 <div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># show</span>
-<span class="n">num_reviews_per_var</span><span class="p">(</span><span class="n">reviews</span><span class="p">,</span> <span class="s1">&#39;business_id&#39;</span><span class="p">,</span> <span class="s1">&#39;review_id&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;num_reviews&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">% o</span><span class="s1">f business&#39;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">num_reviews_per_var</span><span class="p">(</span><span class="n">reviews</span><span class="p">,</span> <span class="s1">&#39;business_id&#39;</span><span class="p">,</span> <span class="s1">&#39;review_id&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;num_reviews&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">% o</span><span class="s1">f business&#39;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -13845,165 +13779,12 @@ AAAAAElFTkSuQmCC
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[39]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="k">import</span> <span class="n">PCA</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">set_context</span><span class="p">(</span><span class="s1">&#39;poster&#39;</span><span class="p">)</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s1">&#39;white&#39;</span><span class="p">)</span>
-<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;display.max_columns&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>  
-
-<span class="n">business_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;data/restaurants_final.csv&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;ISO-8859-1&#39;</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>//anaconda/envs/snakes/lib/python3.5/site-packages/IPython/core/interactiveshell.py:2717: DtypeWarning: Columns (29) have mixed types. Specify dtype option on import or set low_memory=False.
-  interactivity=interactivity, compiler=compiler, result=result)
-</pre>
-</div>
-</div>
-
-</div>
-</div>
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[42]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">busi_categories</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Playgrounds&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Coffee &amp; Tea&#39;</span><span class="p">,</span> <span class="s1">&#39;African&#39;</span><span class="p">,</span> <span class="s1">&#39;Jazz &amp; Blues&#39;</span><span class="p">,</span> <span class="s1">&#39;Bagels&#39;</span><span class="p">,</span> <span class="s1">&#39;Coffeeshops&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Swimming Pools&#39;</span><span class="p">,</span> <span class="s1">&#39;Diners&#39;</span><span class="p">,</span> <span class="s1">&#39;Flea Markets&#39;</span><span class="p">,</span> <span class="s1">&#39;Fast Food&#39;</span><span class="p">,</span> <span class="s1">&#39;German&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Organic Stores&#39;</span><span class="p">,</span> <span class="s1">&#39;Dominican&#39;</span><span class="p">,</span> <span class="s1">&#39;Hot Dogs&#39;</span><span class="p">,</span> <span class="s1">&#39;Hotels &amp; Travel&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Tea Rooms&#39;</span><span class="p">,</span> <span class="s1">&#39;Cheese Tasting Classes&#39;</span><span class="p">,</span> <span class="s1">&#39;Tasting Classes&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Gay Bars&#39;</span><span class="p">,</span> <span class="s1">&#39;Cupcakes&#39;</span><span class="p">,</span> <span class="s1">&#39;Art Classes&#39;</span><span class="p">,</span> <span class="s1">&#39;Beer Bar&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Coffee Roasteries&#39;</span><span class="p">,</span> <span class="s1">&#39;Cafeteria&#39;</span><span class="p">,</span> <span class="s1">&#39;Karaoke&#39;</span><span class="p">,</span> <span class="s1">&#39;Street Vendors&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Salad&#39;</span><span class="p">,</span> <span class="s1">&#39;Tapas/Small Plates&#39;</span><span class="p">,</span> <span class="s1">&#39;Poke&#39;</span><span class="p">,</span> <span class="s1">&#39;American (Traditional)&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Chocolatiers &amp; Shops&#39;</span><span class="p">,</span> <span class="s1">&#39;Casinos&#39;</span><span class="p">,</span> <span class="s1">&#39;Notaries&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Country Dance Halls&#39;</span><span class="p">,</span> <span class="s1">&#39;Public Markets&#39;</span><span class="p">,</span> <span class="s1">&#39;Financial Services&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Drive-Thru Bars&#39;</span><span class="p">,</span> <span class="s1">&#39;Armenian&#39;</span><span class="p">,</span> <span class="s1">&#39;Popcorn Shops&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Adult Entertainment&#39;</span><span class="p">,</span> <span class="s1">&#39;Pasta Shops&#39;</span><span class="p">,</span> <span class="s1">&#39;Bowling&#39;</span><span class="p">,</span> <span class="s1">&#39;South African&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Gift Shops&#39;</span><span class="p">,</span> <span class="s1">&#39;Persian/Iranian&#39;</span><span class="p">,</span> <span class="s1">&#39;Golf&#39;</span><span class="p">,</span> <span class="s1">&#39;Beer Hall&#39;</span><span class="p">,</span> <span class="s1">&#39;Kosher&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Smokehouse&#39;</span><span class="p">,</span> <span class="s1">&#39;Basque&#39;</span><span class="p">,</span> <span class="s1">&#39;Landmarks &amp; Historical Buildings&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Festivals&#39;</span><span class="p">,</span> <span class="s1">&#39;Amusement Parks&#39;</span><span class="p">,</span> <span class="s1">&#39;Eastern European&#39;</span><span class="p">,</span> <span class="s1">&#39;Gastropubs&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Do-It-Yourself Food&#39;</span><span class="p">,</span> <span class="s1">&#39;Puerto Rican&#39;</span><span class="p">,</span> <span class="s1">&#39;Fischbroetchen&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Creperies&#39;</span><span class="p">,</span> <span class="s1">&#39;New Mexican Cuisine&#39;</span><span class="p">,</span> <span class="s1">&#39;Wraps&#39;</span><span class="p">,</span> <span class="s1">&#39;Specialty Schools&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Fruits &amp; Veggies&#39;</span><span class="p">,</span> <span class="s1">&#39;Japanese&#39;</span><span class="p">,</span> <span class="s1">&#39;British&#39;</span><span class="p">,</span> <span class="s1">&#39;Beer Garden&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Wineries&#39;</span><span class="p">,</span> <span class="s1">&#39;Arts &amp; Crafts&#39;</span><span class="p">,</span> <span class="s1">&#39;Leisure Centers&#39;</span><span class="p">,</span> <span class="s1">&#39;Beer&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Wine &amp; Spirits&#39;</span><span class="p">,</span> <span class="s1">&#39;Sandwiches&#39;</span><span class="p">,</span> <span class="s1">&#39;Fishmonger&#39;</span><span class="p">,</span> <span class="s1">&#39;Irish Pub&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Home Services&#39;</span><span class="p">,</span> <span class="s1">&#39;Social Clubs&#39;</span><span class="p">,</span> <span class="s1">&#39;Pop-up Shops&#39;</span><span class="p">,</span> <span class="s1">&#39;Polish&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Custom Cakes&#39;</span><span class="p">,</span> <span class="s1">&#39;Canadian (New)&#39;</span><span class="p">,</span> <span class="s1">&#39;Middle Eastern&#39;</span><span class="p">,</span> <span class="s1">&#39;Wine Bars&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Bistros&#39;</span><span class="p">,</span> <span class="s1">&#39;Hakka&#39;</span><span class="p">,</span> <span class="s1">&#39;Arcades&#39;</span><span class="p">,</span> <span class="s1">&#39;Halal&#39;</span><span class="p">,</span> <span class="s1">&#39;Trinidadian&#39;</span><span class="p">,</span> <span class="s1">&#39;Swabian&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Turkish&#39;</span><span class="p">,</span> <span class="s1">&#39;Food Stands&#39;</span><span class="p">,</span> <span class="s1">&#39;Breakfast &amp; Brunch&#39;</span><span class="p">,</span> <span class="s1">&#39;Hookah Bars&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;CSA&#39;</span><span class="p">,</span> <span class="s1">&#39;Alsatian&#39;</span><span class="p">,</span> <span class="s1">&#39;Chicken Shop&#39;</span><span class="p">,</span> <span class="s1">&#39;Airports&#39;</span><span class="p">,</span> <span class="s1">&#39;Shopping Centers&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Soul Food&#39;</span><span class="p">,</span> <span class="s1">&#39;Meat Shops&#39;</span><span class="p">,</span> <span class="s1">&#39;Dim Sum&#39;</span><span class="p">,</span> <span class="s1">&#39;Pita&#39;</span><span class="p">,</span> <span class="s1">&#39;Tabletop Games&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Moroccan&#39;</span><span class="p">,</span> <span class="s1">&#39;Knife Sharpening&#39;</span><span class="p">,</span> <span class="s1">&#39;Cafes&#39;</span><span class="p">,</span> <span class="s1">&#39;Food Trucks&#39;</span><span class="p">,</span> <span class="s1">&#39;Shopping&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Acai Bowls&#39;</span><span class="p">,</span> <span class="s1">&#39;Spanish&#39;</span><span class="p">,</span> <span class="s1">&#39;Cheesesteaks&#39;</span><span class="p">,</span> <span class="s1">&#39;Churches&#39;</span><span class="p">,</span> <span class="s1">&#39;Hungarian&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Cambodian&#39;</span><span class="p">,</span> <span class="s1">&#39;Hawaiian&#39;</span><span class="p">,</span> <span class="s1">&#39;Australian&#39;</span><span class="p">,</span> <span class="s1">&#39;Delis&#39;</span><span class="p">,</span> <span class="s1">&#39;Szechuan&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Music Venues&#39;</span><span class="p">,</span> <span class="s1">&#39;Pub Food&#39;</span><span class="p">,</span> <span class="s1">&#39;Malaysian&#39;</span><span class="p">,</span> <span class="s1">&#39;Special Education&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Chicken Wings&#39;</span><span class="p">,</span> <span class="s1">&#39;Juice Bars &amp; Smoothies&#39;</span><span class="p">,</span> <span class="s1">&#39;Bed &amp; Breakfast&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Swiss Food&#39;</span><span class="p">,</span> <span class="s1">&#39;Dance Clubs&#39;</span><span class="p">,</span> <span class="s1">&#39;Kids Activities&#39;</span><span class="p">,</span> <span class="s1">&#39;Local Flavor&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Flatbread&#39;</span><span class="p">,</span> <span class="s1">&#39;Gun/Rifle Ranges&#39;</span><span class="p">,</span> <span class="s1">&#39;Baden&#39;</span><span class="p">,</span> <span class="s1">&#39;Asian Fusion&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Laser Tag&#39;</span><span class="p">,</span> <span class="s1">&#39;Vegetarian&#39;</span><span class="p">,</span> <span class="s1">&#39;Colombian&#39;</span><span class="p">,</span> <span class="s1">&#39;Laotian&#39;</span><span class="p">,</span> <span class="s1">&#39;Olive Oil&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Delicatessen&#39;</span><span class="p">,</span> <span class="s1">&#39;Poutineries&#39;</span><span class="p">,</span> <span class="s1">&#39;Teppanyaki&#39;</span><span class="p">,</span> <span class="s1">&#39;Resorts&#39;</span><span class="p">,</span> <span class="s1">&#39;Afghan&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Seafood Markets&#39;</span><span class="p">,</span> <span class="s1">&#39;Scottish&#39;</span><span class="p">,</span> <span class="s1">&#39;Shared Office Spaces&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Cajun/Creole&#39;</span><span class="p">,</span> <span class="s1">&#39;Champagne Bars&#39;</span><span class="p">,</span> <span class="s1">&#39;Peruvian&#39;</span><span class="p">,</span> <span class="s1">&#39;Speakeasies&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Bavarian&#39;</span><span class="p">,</span> <span class="s1">&#39;Food Delivery Services&#39;</span><span class="p">,</span> <span class="s1">&#39;Breweries&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Ice Cream &amp; Frozen Yogurt&#39;</span><span class="p">,</span> <span class="s1">&#39;Tapas Bars&#39;</span><span class="p">,</span> <span class="s1">&#39;Tours&#39;</span><span class="p">,</span> <span class="s1">&#39;Curry Sausage&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Taiwanese&#39;</span><span class="p">,</span> <span class="s1">&#39;Food Court&#39;</span><span class="p">,</span> <span class="s1">&#39;Vegan&#39;</span><span class="p">,</span> <span class="s1">&#39;Cocktail Bars&#39;</span><span class="p">,</span> <span class="s1">&#39;Brasseries&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Desserts&#39;</span><span class="p">,</span> <span class="s1">&#39;Steakhouses&#39;</span><span class="p">,</span> <span class="s1">&#39;Community Service/Non-Profit&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Vitamins &amp; Supplements&#39;</span><span class="p">,</span> <span class="s1">&#39;Mountain Biking&#39;</span><span class="p">,</span> <span class="s1">&#39;Sugar Shacks&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Lounges&#39;</span><span class="p">,</span> <span class="s1">&#39;Art Galleries&#39;</span><span class="p">,</span> <span class="s1">&#39;French&#39;</span><span class="p">,</span> <span class="s1">&#39;Health Markets&#39;</span><span class="p">,</span> <span class="s1">&#39;Waffles&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Shaved Snow&#39;</span><span class="p">,</span> <span class="s1">&#39;Batting Cages&#39;</span><span class="p">,</span> <span class="s1">&#39;Sports Bars&#39;</span><span class="p">,</span> <span class="s1">&#39;Bakeries&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Beverage Store&#39;</span><span class="p">,</span> <span class="s1">&#39;Themed Cafes&#39;</span><span class="p">,</span> <span class="s1">&#39;Vietnamese&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Arts &amp; Entertainment&#39;</span><span class="p">,</span> <span class="s1">&#39;Antiques&#39;</span><span class="p">,</span> <span class="s1">&#39;Czech&#39;</span><span class="p">,</span> <span class="s1">&#39;Cooking Schools&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Austrian&#39;</span><span class="p">,</span> <span class="s1">&#39;Patisserie/Cake Shop&#39;</span><span class="p">,</span> <span class="s1">&#39;Hong Kong Style Cafe&#39;</span><span class="p">,</span> <span class="s1">&#39;Ramen&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Sports Clubs&#39;</span><span class="p">,</span> <span class="s1">&#39;Mongolian&#39;</span><span class="p">,</span> <span class="s1">&#39;Shaved Ice&#39;</span><span class="p">,</span> <span class="s1">&#39;Tacos&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;American (New)&#39;</span><span class="p">,</span> <span class="s1">&#39;Lebanese&#39;</span><span class="p">,</span> <span class="s1">&#39;Flowers &amp; Gifts&#39;</span><span class="p">,</span> <span class="s1">&#39;Chinese&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Indian&#39;</span><span class="p">,</span> <span class="s1">&#39;Local Services&#39;</span><span class="p">,</span> <span class="s1">&#39;Ethnic Food&#39;</span><span class="p">,</span> <span class="s1">&#39;Himalayan/Nepalese&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Florists&#39;</span><span class="p">,</span> <span class="s1">&#39;Pizza&#39;</span><span class="p">,</span> <span class="s1">&#39;Club Crawl&#39;</span><span class="p">,</span> <span class="s1">&#39;Seafood&#39;</span><span class="p">,</span> <span class="s1">&#39;Argentine&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Tex-Mex&#39;</span><span class="p">,</span> <span class="s1">&#39;Brazilian&#39;</span><span class="p">,</span> <span class="s1">&#39;Egyptian&#39;</span><span class="p">,</span> <span class="s1">&#39;Sri Lankan&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Wine Tasting Room&#39;</span><span class="p">,</span> <span class="s1">&#39;Donuts&#39;</span><span class="p">,</span> <span class="s1">&#39;Wigs&#39;</span><span class="p">,</span> <span class="s1">&#39;Cuban&#39;</span><span class="p">,</span> <span class="s1">&#39;Active Life&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Salvadoran&#39;</span><span class="p">,</span> <span class="s1">&#39;Greek&#39;</span><span class="p">,</span> <span class="s1">&#39;Mulled Wine&#39;</span><span class="p">,</span> <span class="s1">&#39;Kiosk&#39;</span><span class="p">,</span> <span class="s1">&#39;Falafel&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Personal Shopping&#39;</span><span class="p">,</span> <span class="s1">&#39;Candy Stores&#39;</span><span class="p">,</span> <span class="s1">&#39;Pakistani&#39;</span><span class="p">,</span> <span class="s1">&#39;International&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Beer Gardens&#39;</span><span class="p">,</span> <span class="s1">&#39;Amateur Sports Teams&#39;</span><span class="p">,</span> <span class="s1">&#39;Gelato&#39;</span><span class="p">,</span> <span class="s1">&#39;Mosques&#39;</span><span class="p">,</span> <span class="s1">&#39;Pubs&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Comedy Clubs&#39;</span><span class="p">,</span> <span class="s1">&#39;Pool Halls&#39;</span><span class="p">,</span> <span class="s1">&#39;Southern&#39;</span><span class="p">,</span> <span class="s1">&#39;Imported Food&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Sushi Bars&#39;</span><span class="p">,</span> <span class="s1">&#39;Cheese Shops&#39;</span><span class="p">,</span> <span class="s1">&#39;Pan Asian&#39;</span><span class="p">,</span> <span class="s1">&#39;Bubble Tea&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Banks &amp; Credit Unions&#39;</span><span class="p">,</span> <span class="s1">&#39;Education&#39;</span><span class="p">,</span> <span class="s1">&#39;Indonesian&#39;</span><span class="p">,</span> <span class="s1">&#39;Food Tours&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Coffee &amp; Tea Supplies&#39;</span><span class="p">,</span> <span class="s1">&#39;Noodles&#39;</span><span class="p">,</span> <span class="s1">&#39;Fish &amp; Chips&#39;</span><span class="p">,</span> <span class="s1">&#39;Kebab&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Milkshake Bars&#39;</span><span class="p">,</span> <span class="s1">&#39;Korean&#39;</span><span class="p">,</span> <span class="s1">&#39;Cabaret&#39;</span><span class="p">,</span> <span class="s1">&#39;Japanese Curry&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Farmers Market&#39;</span><span class="p">,</span> <span class="s1">&#39;Public Services &amp; Government&#39;</span><span class="p">,</span> <span class="s1">&#39;Irish&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Parent Cafes&#39;</span><span class="p">,</span> <span class="s1">&#39;Latin American&#39;</span><span class="p">,</span> <span class="s1">&#39;Real Estate&#39;</span><span class="p">,</span> <span class="s1">&#39;Insurance&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Burgers&#39;</span><span class="p">,</span> <span class="s1">&#39;Wine Tours&#39;</span><span class="p">,</span> <span class="s1">&#39;Arabian&#39;</span><span class="p">,</span> <span class="s1">&#39;Buffets&#39;</span><span class="p">,</span> <span class="s1">&#39;Whiskey Bars&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Caribbean&#39;</span><span class="p">,</span> <span class="s1">&#39;Slovakian&#39;</span><span class="p">,</span> <span class="s1">&#39;Tuscan&#39;</span><span class="p">,</span> <span class="s1">&#39;Ukrainian&#39;</span><span class="p">,</span> <span class="s1">&#39;Distilleries&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Ethiopian&#39;</span><span class="p">,</span> <span class="s1">&#39;Izakaya&#39;</span><span class="p">,</span> <span class="s1">&#39;Financial Advising&#39;</span><span class="p">,</span> <span class="s1">&#39;Barbeque&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Religious Organizations&#39;</span><span class="p">,</span> <span class="s1">&#39;Cantonese&#39;</span><span class="p">,</span> <span class="s1">&#39;Empanadas&#39;</span><span class="p">,</span> <span class="s1">&#39;Hot Pot&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Modern European&#39;</span><span class="p">,</span> <span class="s1">&#39;Internet Cafes&#39;</span><span class="p">,</span> <span class="s1">&#39;Kombucha&#39;</span><span class="p">,</span> <span class="s1">&#39;Nightlife&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Thai&#39;</span><span class="p">,</span> <span class="s1">&#39;Bangladeshi&#39;</span><span class="p">,</span> <span class="s1">&#39;Bars&#39;</span><span class="p">,</span> <span class="s1">&#39;Venezuelan&#39;</span><span class="p">,</span> <span class="s1">&#39;Dive Bars&#39;</span><span class="p">,</span> <span class="s1">&#39;Fondue&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Guest Houses&#39;</span><span class="p">,</span> <span class="s1">&#39;Mediterranean&#39;</span><span class="p">,</span> <span class="s1">&#39;Belgian&#39;</span><span class="p">,</span> <span class="s1">&#39;Portuguese&#39;</span><span class="p">,</span> <span class="s1">&#39;Donairs&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Russian&#39;</span><span class="p">,</span> <span class="s1">&#39;Herbs &amp; Spices&#39;</span><span class="p">,</span> <span class="s1">&#39;Mexican&#39;</span><span class="p">,</span> <span class="s1">&#39;Macarons&#39;</span><span class="p">,</span> <span class="s1">&#39;Cinema&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Butcher&#39;</span><span class="p">,</span> <span class="s1">&#39;Filipino&#39;</span><span class="p">,</span> <span class="s1">&#39;Pretzels&#39;</span><span class="p">,</span> <span class="s1">&#39;Reunion&#39;</span><span class="p">,</span> <span class="s1">&#39;Live/Raw Food&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Mini Golf&#39;</span><span class="p">,</span> <span class="s1">&#39;Scandinavian&#39;</span><span class="p">,</span> <span class="s1">&#39;Burmese&#39;</span><span class="p">,</span> <span class="s1">&#39;Yelp Events&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Specialty Food&#39;</span><span class="p">,</span> <span class="s1">&#39;Couriers &amp; Delivery Services&#39;</span><span class="p">,</span> <span class="s1">&#39;Soup&#39;</span><span class="p">,</span>
-       <span class="s1">&#39;Singaporean&#39;</span><span class="p">,</span> <span class="s1">&#39;Comfort Food&#39;</span><span class="p">,</span> <span class="s1">&#39;Museums&#39;</span><span class="p">,</span> <span class="s1">&#39;Italian&#39;</span><span class="p">]</span>
-</pre></div>
-
-</div>
-</div>
-</div>
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[43]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">num_busi_cat</span> <span class="o">=</span> <span class="n">business_df</span><span class="p">[</span><span class="n">busi_categories</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[45]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># only consider those with total counts greater than 11</span>
-<span class="n">num_busi_cat</span> <span class="o">=</span> <span class="n">num_busi_cat</span><span class="p">[</span><span class="n">num_busi_cat</span> <span class="o">&gt;</span> <span class="mi">11</span><span class="p">]</span>
-<span class="n">num_busi_cat</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[46]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">num_busi_cat</span> <span class="o">=</span> <span class="n">num_busi_cat</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
-<span class="n">num_busi_cat</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;category&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span><span class="p">]</span>
-</pre></div>
-
-</div>
-</div>
-</div>
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
@@ -14011,8 +13792,7 @@ AAAAAElFTkSuQmCC
 <div class="prompt input_prompt">In&nbsp;[49]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># show</span>
-<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
 <span class="n">sns</span><span class="o">.</span><span class="n">barplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;category&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">num_busi_cat</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;lightgrey&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;restaurant category&#39;</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;number of occurance&#39;</span><span class="p">)</span>
@@ -14977,597 +14757,12 @@ UiBuAAAAAElFTkSuQmCC
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[51]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">n_components</span> <span class="o">=</span> <span class="mi">30</span>
-<span class="n">pca</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="n">n_components</span><span class="p">)</span>
-
-<span class="n">tokeep</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">num_busi_cat</span><span class="p">[</span><span class="s1">&#39;category&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;business_id&#39;</span><span class="p">]</span>
-<span class="n">business_df_sub</span> <span class="o">=</span> <span class="n">business_df</span><span class="p">[</span><span class="n">tokeep</span><span class="p">]</span>
-<span class="n">X</span> <span class="o">=</span> <span class="n">business_df_sub</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;business_id&#39;</span><span class="p">])</span>
-<span class="n">X_pca</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-
-<span class="c1"># # we make a scree plot to see how many Principal Components to consider</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
-<span class="n">eig</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">explained_variance_</span>
-
-<span class="c1"># # and calculate the variance explained by the PC analysis</span>
-<span class="n">var_exp</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">explained_variance_ratio_</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span><span class="o">*</span><span class="mf">100.</span>
-
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">eig</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">eig</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Scree plot for the PCA&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Number of principal components&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Eigenvalues&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-
-
-<div class="output_png output_subarea ">
-<img src="data:image/png;base64,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
-YT19Hbf256dJu/btpKamZnre7LjTtdLqvPVat/5es+N2937r9UuWLJnp0olpPDw87nqeIkWK4Ovr
-e091pfXZ79q167b/joA1nK9cuZLevXvz9NNPk5iYyDfffAPA3LlzmTt3boZjbty4wbJly/jHP/5x
-T7WISP6iwC4iDqdIkSLMmzePsmXL0qlTp0wDXKVKlShVqpRtFjRtLfbM3ur53XffsX79elsbR2bS
-jk9MTMwQ4CwWC2vWrLHtU7VqVcA663vrvufPn2f37t2ZzurfKm1WP/0fGceOHQNuzrTfKu28v/32
-W4bZ5bi4OBISEjKsTpJdadc6cuQIZrPZ7rsjR44A5Ni1sqpq1aqcOHECLy+vDA+2/vzzz8THx9u1
-8eSExx9/nCpVqvDdd9/x9ttvU6FChQz7WCwWvvjiC/bt20f//v0B69rtly5d4sknn8z0RV/79+8n
-PDycpUuXKrCLOCj1sIuIw3FycqJdu3bExcXxySef2GZz01u9ejXnzp2zrbjh5eVFxYoVWbFiha3P
-Gaz9xnPmzGHt2rW2lobMVKhQgYYNG7JhwwZ++eUXu++WLVvGgAED+OqrrwB45plnKF68OBERERmW
-Lfzkk08IDQ3NcI7M/Pnnn3z77be2zxaLhdmzZwPQsmXLTI959tlncXV1Zf78+Vy8eNHuu6lTpwLW
-VV/SFCpUKNPf37144YUXKFSoELNmzbJbISc5OZnw8HAAWrRoka1z329tL774IhaLxXbPac6fP09I
-SAiDBg3Kkdn+9AoVKsS7777L1atXeeuttzKsn26xWJg0aRL79u3D39/f1oef1g7Ts2dPmjdvnuGn
-X79+VKhQgSNHjuTI6jYikvdohl1EHNK7777Lb7/9xueff87mzZt58cUXqVy5MlevXuXHH39k/fr1
-NGnSxPbQprOzM6NGjaJ///60b9+ezp07U7JkSVauXMnevXsZO3YsRYoUueM1R40aRVBQEK+++ipd
-u3alVq1aHDx4kC+//JIqVarQr18/AEqVKsWIESMYPnw4gYGBdOrUibJly7Jp0yY2bNhA06ZN7ynI
-uri4MHToUPbu3Yu7uzvr169n69atdO/e/batNm5ubowcOZKhQ4fSrl07OnXqRKlSpdiwYQNbt27F
-z8+PwMBA2/7ly5e3BdtGjRrdc/sHQPXq1XnzzTeZMmUKL7/8Mu3atcPFxYWVK1eyb98+unXrRqNG
-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
-ZnHixAl27NhBxYoVadq0KTExMYwbN46NGzcyZMiQ3KhVssrLCzZsgEuXIC4OKlc2uiIRERERyaIs
-z7D379+fkJAQYmJiaNiwITNnzqRw4cLEx8eze/duQkND+cc//pEbtUpWqY9dREREJN/L8gw7QL9+
-/ejXr5/dmKenJ9u3b6dQIb2LKc+4tY+9RQvjahERERGRbMlWYAf48ccf2bhxI3/88Qd9+vShWLFi
-7Nmzh5YtW+Li4pKTNUp2aYZdREREJN/LcmBPSUlh8ODBrFy50jbWqVMnLl68yODBg1m8eDGzZs3C
-zc0tRwuVbEgf2LVSjIiIiEi+lOX+lZkzZ7Jy5Ur+9a9/sXbtWix/rz7SvHlzhgwZwr59+5g+fXqO
-FyrZUKbMzQdN9+/XSjEiIiIi+VCWA3tUVBQdO3bklVdewdXV1TZeuHBhgoOD6dKlC2vXrs3RIuU+
-pPWxx8dDTIyxtYiIiIhIlmU5sP/55594pX+Y8RZms5mzZ8/eV1GSg9QWIyIiIpKvZevFSYcPH77t
-9//73/94+OGH76soyUHp/7jSg6ciIiIi+U6WA3v79u1ZsmQJ//3vf0lJSQHAZDJx48YNpk+fzrff
-fkubNm1yvFDJJs2wi4iIiORrWV4l5vXXX+fIkSO88847ODtbD3/rrbe4fPkyycnJNG3alD59+uR4
-oZJNdeve3NYMu4iIiEi+k+XA7uTkxMSJE+nYsSPr1q0jNjaWlJQUKleujJ+fH82aNcuNOiW73Nyg
-enU4eRIOHoSUFHByMroqEREREblH2X5xko+PDz4+PjlZi+SWxx6zBvZr1+D4cahd2+iKREREROQe
-ZTmwp39h0p289NJLWS5GcomXF6T9c9u6VYFdREREJB/JcmB/6623MJlMthcmpWcymWzbCux5iL8/
-fPyxdXvsWAgKAuds/8cVEREREXmAspza5s+fn2EsJSWFCxcusHr1an777TdmzJiRI8VJDmnRAry9
-YccOOHwY5s+HHj2MrkpERERE7kGWA3vjxo1v+12rVq3o27cvM2fOZPz48fdVmOQgk8k6s+7vb/08
-erR1lr1IEUPLEhEREZG7y/I67Hfj7+/P999/n9Onlfv1/PPQvLl1OzYWZs0yth4RERERuSc5HtgP
-Hjxo18sueciHH9pvx8cbV4uIiIiI3JMst8R89tlnmY4nJiYSHR3N2rVrCQwMvOfzLV26lDlz5vDH
-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
-"
->
-</div>
-
-</div>
-
-</div>
-</div>
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[56]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">v</span> <span class="o">=</span> <span class="n">var_exp</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;% variance explained by keeping 30 PCs:&quot;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>% variance explained by keeping 30 PCs: 78.1437630596
-</pre>
-</div>
-</div>
-
-</div>
-</div>
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[59]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">plot_pca_results</span><span class="p">(</span><span class="n">pc1</span><span class="p">,</span> <span class="n">pc2</span><span class="p">,</span> <span class="n">feature_name</span><span class="p">):</span>
-    <span class="n">temp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([])</span>
-    <span class="n">temp</span><span class="p">[</span><span class="s1">&#39;pc1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">X_pca</span><span class="p">[:,</span><span class="n">pc1</span><span class="p">]</span>
-    <span class="n">temp</span><span class="p">[</span><span class="s1">&#39;pc2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">X_pca</span><span class="p">[:,</span><span class="n">pc2</span><span class="p">]</span>
-    <span class="n">temp</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">business_df_sub</span><span class="p">[</span><span class="n">feature_name</span><span class="p">]</span>
-    
-    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">temp</span><span class="p">[</span><span class="n">temp</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">False</span><span class="p">][</span><span class="s1">&#39;pc1&#39;</span><span class="p">],</span> <span class="n">temp</span><span class="p">[</span><span class="n">temp</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">False</span><span class="p">][</span><span class="s1">&#39;pc2&#39;</span><span class="p">],</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;no&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">temp</span><span class="p">[</span><span class="n">temp</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">][</span><span class="s1">&#39;pc1&#39;</span><span class="p">],</span> <span class="n">temp</span><span class="p">[</span><span class="n">temp</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">][</span><span class="s1">&#39;pc2&#39;</span><span class="p">],</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;yes&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;brown&#39;</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="n">feature_name</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;principle component &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">pc1</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;principle component &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">pc2</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center left&#39;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
@@ -15575,8 +14770,7 @@ jIGdiIiIiMiCMbATEREREVkwBnYiIiIiIgvGwE5EREREZMH+H5LDDkOy6wF9AAAAAElFTkSuQmCC
 <div class="prompt input_prompt">In&nbsp;[60]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># show</span>
-<span class="n">feature_name</span> <span class="o">=</span> <span class="s1">&#39;Fast Food&#39;</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">feature_name</span> <span class="o">=</span> <span class="s1">&#39;Fast Food&#39;</span>
 <span class="n">plot_pca_results</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">feature_name</span><span class="p">)</span>
 <span class="n">feature_name</span> <span class="o">=</span> <span class="s1">&#39;Sandwiches&#39;</span>
 <span class="n">plot_pca_results</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">feature_name</span><span class="p">)</span>
@@ -18689,98 +17883,15 @@ eiQZACVJkqQeSQZASZIkqUeSAVCSJEnqkWQAlCRJknqk/w9RQyDCPWFpkAAAAABJRU5ErkJggg==
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[62]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">business_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;data/restaurants.csv&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;ISO-8859-1&#39;</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[63]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># first figure out the business with the longest attribute list. </span>
-<span class="c1"># use this as the template for expanding the attributes into a pandas dataframe for all businesses.</span>
-<span class="n">business_df</span><span class="p">[</span><span class="s1">&#39;attri_length&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">business_df</span><span class="p">[</span><span class="s1">&#39;attributes&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
-
-<span class="c1"># for the business with the longest attribute list, get the primary keys in the json </span>
-<span class="c1"># to parse through the attribute list and expand them into a dataframe. </span>
-
-<span class="n">temp</span> <span class="o">=</span> <span class="n">business_df</span><span class="p">[</span><span class="n">business_df</span><span class="p">[</span><span class="s1">&#39;attri_length&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">business_df</span><span class="p">[</span><span class="s1">&#39;attri_length&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()]</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">temp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="n">temp</span><span class="p">)</span>
-<span class="n">temp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot; T&quot;</span><span class="p">,</span> <span class="s2">&quot; t&quot;</span><span class="p">,</span> <span class="n">temp</span><span class="p">)</span>
-<span class="n">temp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot; F&quot;</span><span class="p">,</span> <span class="s2">&quot; f&quot;</span><span class="p">,</span> <span class="n">temp</span><span class="p">)</span>
-<span class="n">j</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
-
-<span class="c1"># save the attribute names as a list so that I can use this as a template for parsing through all businesses. </span>
-<span class="n">cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-<span class="k">for</span> <span class="n">keys</span> <span class="ow">in</span> <span class="n">j</span><span class="p">:</span>
-    <span class="n">cols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[64]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">business_attributes</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">)</span>
-
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">business_df</span><span class="p">)):</span>
-    
-    <span class="n">temp</span> <span class="o">=</span> <span class="n">business_df</span><span class="p">[</span><span class="s1">&#39;attributes&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
-    <span class="n">temp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="n">temp</span><span class="p">)</span>
-    <span class="n">temp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot; T&quot;</span><span class="p">,</span> <span class="s2">&quot; t&quot;</span><span class="p">,</span> <span class="n">temp</span><span class="p">)</span>
-    <span class="n">temp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot; F&quot;</span><span class="p">,</span> <span class="s2">&quot; f&quot;</span><span class="p">,</span> <span class="n">temp</span><span class="p">)</span>
-    <span class="n">j</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
-    
-    <span class="n">output</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
-        <span class="k">try</span><span class="p">:</span> 
-            <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">j</span><span class="p">[</span><span class="n">c</span><span class="p">])</span>
-        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;unknown&#39;</span><span class="p">)</span>      
-            
-    <span class="n">temp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">)</span>
-    <span class="n">temp</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">output</span>
-    
-    <span class="n">business_attributes</span> <span class="o">=</span> <span class="p">[</span><span class="n">business_attributes</span><span class="p">,</span> <span class="n">temp</span><span class="p">]</span>
-    <span class="n">business_attributes</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">business_attributes</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[65]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">business_attributes</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="c1"># Eliminate the attributes where the top level is &#39;unknown&#39;. </span>
-<span class="c1"># This means that we don&#39;t have the information for the majority of restaurants. </span>
-<span class="n">temp</span> <span class="o">=</span> <span class="n">business_attributes</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;BusinessParking&#39;</span><span class="p">,</span> <span class="s1">&#39;BestNights&#39;</span><span class="p">,</span> <span class="s1">&#39;Music&#39;</span><span class="p">,</span> <span class="s1">&#39;Ambience&#39;</span><span class="p">,</span> 
-                                                        <span class="s1">&#39;GoodForMeal&#39;</span><span class="p">,</span> <span class="s1">&#39;DietaryRestrictions&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
-<span class="n">meaningful_attributes</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;top&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;unknown&#39;</span>
-</pre></div>
-
-</div>
-</div>
-</div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered">
@@ -18794,31 +17905,6 @@ eiQZACVJkqQeSQZASZIkqUeSAVCSJEnqkWQAlCRJknqk/w9RQyDCPWFpkAAAAABJRU5ErkJggg==
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[66]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">makePercPivotTable</span><span class="p">(</span><span class="n">outercat</span><span class="p">,</span> <span class="n">innercat</span><span class="p">,</span> <span class="n">indexcat</span><span class="p">):</span>
-    
-    <span class="n">temp</span> <span class="o">=</span> <span class="n">business_attributes</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span><span class="n">aggfunc</span><span class="o">=</span><span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">outercat</span><span class="p">,</span> <span class="n">innercat</span><span class="p">])</span>
-    <span class="n">temp</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">indexcat</span><span class="p">]</span>
-    <span class="n">temp</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
-    <span class="n">temp</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">outercat</span><span class="p">,</span> <span class="n">innercat</span><span class="p">,</span> <span class="s1">&#39;subcount&#39;</span><span class="p">]</span>
-
-    <span class="n">totalcount</span> <span class="o">=</span> <span class="n">business_attributes</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span><span class="n">aggfunc</span><span class="o">=</span><span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">outercat</span><span class="p">])</span>
-    <span class="n">totalcount</span> <span class="o">=</span> <span class="n">totalcount</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">indexcat</span><span class="p">]</span>
-    <span class="n">totalcount</span> <span class="o">=</span> <span class="n">totalcount</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
-    <span class="n">totalcount</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">outercat</span><span class="p">,</span> <span class="s1">&#39;totalcount&#39;</span><span class="p">]</span>
-
-    <span class="n">temp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="n">temp</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="n">totalcount</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="n">outercat</span><span class="p">])</span>
-    <span class="n">temp</span><span class="p">[</span><span class="s1">&#39;perc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp</span><span class="p">[</span><span class="s1">&#39;subcount&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">100.</span> <span class="o">/</span> <span class="n">temp</span><span class="p">[</span><span class="s1">&#39;totalcount&#39;</span><span class="p">]</span>
-    
-    <span class="k">return</span> <span class="n">temp</span>
-</pre></div>
-
-</div>
-</div>
-</div>
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
@@ -18826,8 +17912,7 @@ eiQZACVJkqQeSQZASZIkqUeSAVCSJEnqkWQAlCRJknqk/w9RQyDCPWFpkAAAAABJRU5ErkJggg==
 <div class="prompt input_prompt">In&nbsp;[67]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># show</span>
-<span class="n">temp</span> <span class="o">=</span> <span class="n">makePercPivotTable</span><span class="p">(</span><span class="s1">&#39;RestaurantsPriceRange2&#39;</span><span class="p">,</span> <span class="s1">&#39;RestaurantsAttire&#39;</span><span class="p">,</span> <span class="s1">&#39;OutdoorSeating&#39;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">temp</span> <span class="o">=</span> <span class="n">makePercPivotTable</span><span class="p">(</span><span class="s1">&#39;RestaurantsPriceRange2&#39;</span><span class="p">,</span> <span class="s1">&#39;RestaurantsAttire&#39;</span><span class="p">,</span> <span class="s1">&#39;OutdoorSeating&#39;</span><span class="p">)</span>
 <span class="n">temp</span> <span class="o">=</span> <span class="n">temp</span><span class="p">[</span><span class="n">temp</span><span class="p">[</span><span class="s1">&#39;RestaurantsPriceRange2&#39;</span><span class="p">]</span><span class="o">!=</span><span class="s1">&#39;unknown&#39;</span><span class="p">]</span>
 <span class="n">temp</span> <span class="o">=</span> <span class="n">temp</span><span class="p">[</span><span class="n">temp</span><span class="p">[</span><span class="s1">&#39;RestaurantsAttire&#39;</span><span class="p">]</span><span class="o">!=</span><span class="s1">&#39;unknown&#39;</span><span class="p">]</span>
 
@@ -19437,8 +18522,7 @@ IYQogiRJIYQQogiSJIUQQogiSJIUQgghiiBJUgghhCjC/wMLtV5H5kDqXgAAAABJRU5ErkJggg==
 <div class="prompt input_prompt">In&nbsp;[68]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># show</span>
-<span class="n">temp</span> <span class="o">=</span> <span class="n">makePercPivotTable</span><span class="p">(</span><span class="s1">&#39;RestaurantsPriceRange2&#39;</span><span class="p">,</span> <span class="s1">&#39;RestaurantsReservations&#39;</span><span class="p">,</span> <span class="s1">&#39;OutdoorSeating&#39;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">temp</span> <span class="o">=</span> <span class="n">makePercPivotTable</span><span class="p">(</span><span class="s1">&#39;RestaurantsPriceRange2&#39;</span><span class="p">,</span> <span class="s1">&#39;RestaurantsReservations&#39;</span><span class="p">,</span> <span class="s1">&#39;OutdoorSeating&#39;</span><span class="p">)</span>
 <span class="n">temp</span> <span class="o">=</span> <span class="n">temp</span><span class="p">[</span><span class="n">temp</span><span class="p">[</span><span class="s1">&#39;RestaurantsReservations&#39;</span><span class="p">]</span><span class="o">!=</span><span class="s1">&#39;unknown&#39;</span><span class="p">]</span>
 <span class="n">temp</span> <span class="o">=</span> <span class="n">temp</span><span class="p">[</span><span class="n">temp</span><span class="p">[</span><span class="s1">&#39;RestaurantsPriceRange2&#39;</span><span class="p">]</span><span class="o">!=</span><span class="s1">&#39;unknown&#39;</span><span class="p">]</span>
 
@@ -20109,8 +19193,7 @@ fvaLnR61QlcAAAAASUVORK5CYII=
 <div class="prompt input_prompt">In&nbsp;[69]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># show</span>
-<span class="n">temp</span> <span class="o">=</span> <span class="n">makePercPivotTable</span><span class="p">(</span><span class="s1">&#39;HasTV&#39;</span><span class="p">,</span> <span class="s1">&#39;NoiseLevel&#39;</span><span class="p">,</span> <span class="s1">&#39;OutdoorSeating&#39;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">temp</span> <span class="o">=</span> <span class="n">makePercPivotTable</span><span class="p">(</span><span class="s1">&#39;HasTV&#39;</span><span class="p">,</span> <span class="s1">&#39;NoiseLevel&#39;</span><span class="p">,</span> <span class="s1">&#39;OutdoorSeating&#39;</span><span class="p">)</span>
 <span class="n">temp</span> <span class="o">=</span> <span class="n">temp</span><span class="p">[</span><span class="n">temp</span><span class="p">[</span><span class="s1">&#39;HasTV&#39;</span><span class="p">]</span><span class="o">!=</span><span class="s1">&#39;unknown&#39;</span><span class="p">]</span>
 <span class="n">temp</span> <span class="o">=</span> <span class="n">temp</span><span class="p">[</span><span class="n">temp</span><span class="p">[</span><span class="s1">&#39;NoiseLevel&#39;</span><span class="p">]</span><span class="o">!=</span><span class="s1">&#39;unknown&#39;</span><span class="p">]</span>
 
