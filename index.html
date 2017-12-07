@@ -11781,7 +11781,8 @@ div#notebook {
 <li><a href='#review'>Literature review / related work</a></li>
 <li><a href='#modeling'>Modeling approach and project trajectory</a><ul>
 <li><a href='#baseline'>The baseline model</a></li>
-<li><a href='#matrix'>Matrix factorization</a></li>
+<li><a href='#memory'>Memory-Based Collaborative Filtering</a></li>
+<li><a href='#modelcf'>Model-Based Collaborative Filtering</a></li>
 </ul>
 </li>
 </ul>
@@ -20140,7 +20141,8 @@ where $\mu$ represents the mean of all ratings. $b_{u}$ and $b_{i}$ represent th
 <center>$$s_{u}^{cos}(u_{k},u_{a}) = \frac{u_{k} \cdot u_{a}}{\left\| u_{k} \right\|\left\| u_{a} \right\|} = \frac{\sum x_{k,m}x_{a,m}}{\sqrt{\sum x_{k,m}^{2}\sum x_{a,m}^{2}}}$$</center>
 To calculate similarity between items m and b we used this formula:
 <center>$$s_{u}^{cos}(i_{m},i_{b}) = \frac{i_{m} \cdot i_{b}}{\left\| i_{m} \right\|\left\| i_{b} \right\|} = \frac{\sum x_{a,m}x_{a,b}}{\sqrt{\sum x_{a,m}^{2}\sum x_{a,b}^{2}}}$$</center><p>Because the Yelp ratings are in the scale of 1-5 (all positive numbers), the output of cosine distance will range between 0 and 1, where a value closer to 1 means a higher similarity.</p>
-<h2 id="III.-Model-Based-Collaborative-filtering">III. Model-Based Collaborative filtering<a class="anchor-link" href="#III.-Model-Based-Collaborative-filtering">&#182;</a></h2><p>The drawback to memory-based prediction is that it isn't scalable. As a result, this next cell will only run for the sample set. When attempting to run this cell on the entire data matrix, python returns a memory error.</p>
+<h2 id="III.-Model-Based-Collaborative-filtering">III. Model-Based Collaborative filtering<a class="anchor-link" href="#III.-Model-Based-Collaborative-filtering">&#182;</a></h2><p>Because there is not a huge overlap between all users and all restaurants, we observed that our dataframe is very sparce (&gt;99.9%), as expected. Given this sparsity, we also implemented model-based CF that is able to deal with sparsity better than memory-based CF.</p>
+<p>The drawback to memory-based prediction is that it isn't scalable. As a result, this next cell will only run for the sample set. When attempting to run this cell on the entire data matrix, python returns a memory error.</p>
 <p>The prolem with memory-based collaborative filtering is that it is unable to make predictions for new users or restaurants. This is known as the cold-start problem. Model-based collaborative filtering can handle higher sparsity levels, but also suffer from the cold-start problem. Our next approach will be through model-based collaborative filtering.</p>
 <p>Model-based collaborative filtering also utilizes matrix-factorization, but it is also able to learn the features that describe the characteristics of each rating. It predicts unknown ratings by taking the dot product of the latent features of users or items.</p>
 <p>Matrix factorization allows us to restructure our user-item matrix into low-rank structure, and represent the matrix by the multiplication of two low-rank matrices, where the rows contain the latent factor. We use this matrix to approzimate our original matrix bt multiplying the low-rank matrices together, which fills in the missing entries in the original matrix.</p>
@@ -20488,7 +20490,28 @@ $${\mathit{R}\mathit{M}\mathit{S}\mathit{E}} = \sqrt{\frac{1}{N}\sum(x_{i} - \ha
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><a id='matrix'></a>
+<h3 id="Pre-collaborative-filtering-step:-Organize-data-into-a-table-with-users-and-businesses'-ratings-as-two-columns.">Pre-collaborative filtering step: Organize data into a table with users and businesses' ratings as two columns.<a class="anchor-link" href="#Pre-collaborative-filtering-step:-Organize-data-into-a-table-with-users-and-businesses'-ratings-as-two-columns.">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a id='memory'></a>
 <a href="#top">back to top</a></p>
 
 </div>
@@ -20499,169 +20522,17 @@ $${\mathit{R}\mathit{M}\mathit{S}\mathit{E}} = \sqrt{\frac{1}{N}\sum(x_{i} - \ha
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Matrix-Factorization">Matrix Factorization<a class="anchor-link" href="#Matrix-Factorization">&#182;</a></h2>
+<h2 id="Memory-Based-Collaborative-Filtering">Memory-Based Collaborative Filtering<a class="anchor-link" href="#Memory-Based-Collaborative-Filtering">&#182;</a></h2>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="k">import</span> <span class="n">cross_validation</span> <span class="k">as</span> <span class="n">cv</span>
-<span class="kn">from</span> <span class="nn">sklearn.metrics.pairwise</span> <span class="k">import</span> <span class="n">pairwise_distances</span>
-<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="k">import</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">r2_score</span>
-<span class="kn">from</span> <span class="nn">math</span> <span class="k">import</span> <span class="n">sqrt</span>
-<span class="kn">import</span> <span class="nn">scipy.sparse</span> <span class="k">as</span> <span class="nn">sp</span>
-<span class="kn">from</span> <span class="nn">scipy.sparse.linalg</span> <span class="k">import</span> <span class="n">svds</span>
-<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">KFold</span>
-<span class="kn">import</span> <span class="nn">matplotlib</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>//anaconda/envs/snakes/lib/python3.5/site-packages/sklearn/cross_validation.py:41: DeprecationWarning: This module was deprecated in version 0.18 in favor of the model_selection module into which all the refactored classes and functions are moved. Also note that the interface of the new CV iterators are different from that of this module. This module will be removed in 0.20.
-  &#34;This module will be removed in 0.20.&#34;, DeprecationWarning)
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">add_numerical_id()</span>
-<span class="sd">-this function replaces string identifiers with numeric identifiers</span>
-
-
-<span class="sd">inputs: dataframe, variable to be replaced, name of new variable</span>
-<span class="sd">outputs: dataframe with new variables</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="k">def</span> <span class="nf">add_numerical_id</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">new_var</span><span class="p">):</span>
-    <span class="c1"># Get the list of Later, we&#39;ll change the user_id and business_id by numerical values</span>
-    <span class="n">unique_values</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
-    <span class="n">n_unique_values</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_values</span><span class="p">)</span>
-    <span class="n">df_var_id</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">unique_values</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">n_unique_values</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">var</span><span class="p">])</span>
-    <span class="n">df_var_id</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">new_var</span>
-    <span class="n">df_var_id</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_var_id</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="n">var</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">df</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;data/recommendations.csv&#39;</span><span class="p">,</span><span class="n">encoding</span> <span class="o">=</span> <span class="s2">&quot;ISO-8859-1&quot;</span><span class="p">,</span><span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">sample_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;data/sample.csv&#39;</span><span class="p">,</span><span class="n">encoding</span> <span class="o">=</span> <span class="s2">&quot;ISO-8859-1&quot;</span><span class="p">,</span><span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> 
-<span class="c1">#sample.csv is ~10% of the recommendations dataframe</span>
-
-<span class="n">n_users</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;user_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">n_items</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;business_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-<span class="n">sample_n_users</span> <span class="o">=</span> <span class="n">sample_df</span><span class="p">[</span><span class="s1">&#39;user_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">sample_n_items</span> <span class="o">=</span> <span class="n">sample_df</span><span class="p">[</span><span class="s1">&#39;business_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">n_users</span><span class="p">,</span> <span class="n">n_items</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">sample_n_users</span><span class="p">,</span> <span class="n">sample_n_items</span><span class="p">)</span>
-
-<span class="n">df</span> <span class="o">=</span> <span class="n">add_numerical_id</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s1">&#39;user_id&#39;</span><span class="p">,</span> <span class="s1">&#39;user_id_key&#39;</span><span class="p">)</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">add_numerical_id</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s1">&#39;business_id&#39;</span><span class="p">,</span> <span class="s1">&#39;business_id_key&#39;</span><span class="p">)</span>
-
-<span class="n">sample_df</span> <span class="o">=</span> <span class="n">add_numerical_id</span><span class="p">(</span><span class="n">sample_df</span><span class="p">,</span> <span class="s1">&#39;user_id&#39;</span><span class="p">,</span> <span class="s1">&#39;user_id_key&#39;</span><span class="p">)</span>
-<span class="n">sample_df</span> <span class="o">=</span> <span class="n">add_numerical_id</span><span class="p">(</span><span class="n">sample_df</span><span class="p">,</span> <span class="s1">&#39;business_id&#39;</span><span class="p">,</span> <span class="s1">&#39;business_id_key&#39;</span><span class="p">)</span>
-
-<span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;user_id&#39;</span><span class="p">,</span><span class="s1">&#39;business_id&#39;</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">sample_df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;user_id&#39;</span><span class="p">,</span><span class="s1">&#39;business_id&#39;</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="c1">#create a unique list of user_id_keys and their corresponding average rating</span>
-<span class="n">user_id_key_rating</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;user_id_key&#39;</span><span class="p">)[</span><span class="s1">&#39;user_average_stars&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-<span class="n">user_rating_count</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;user_id_key&#39;</span><span class="p">)[</span><span class="s1">&#39;user_average_stars&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
-
-<span class="n">user_highest_index</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;user_id_key&#39;</span><span class="p">,</span><span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span><span class="s1">&#39;review_stars&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">idxmax</span><span class="p">()</span>
-<span class="n">business_by_index</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">user_highest_index</span><span class="p">,</span><span class="s1">&#39;business_id_key&#39;</span><span class="p">]</span>
-
-<span class="n">user_highest_rated_restaurant</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">business_by_index</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
-          <span class="n">index</span><span class="o">=</span><span class="n">user_highest_index</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
-
-<span class="c1">#create a unique list of business_id_keys and their corresponding business name</span>
-<span class="n">business_id_key_name</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;business_id_key&#39;</span><span class="p">)[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-
-<span class="c1">#other features to be included in the model:</span>
-<span class="n">ftres_response</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;review_stars&#39;</span><span class="p">]</span>
-<span class="n">ftres_ids</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;user_id_key&#39;</span><span class="p">,</span> <span class="s1">&#39;business_id_key&#39;</span><span class="p">]</span>
-<span class="n">ftres_all</span> <span class="o">=</span> <span class="n">ftres_ids</span> <span class="o">+</span> <span class="n">ftres_response</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>//anaconda/envs/snakes/lib/python3.5/site-packages/IPython/core/interactiveshell.py:2717: DtypeWarning: Columns (38,40,41,42,43,44,45,47,48,49,52,53,54,55,57,58,60,61,62,64,66,67,70,71,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103) have mixed types. Specify dtype option on import or set low_memory=False.
-  interactivity=interactivity, compiler=compiler, result=result)
-//anaconda/envs/snakes/lib/python3.5/site-packages/IPython/core/interactiveshell.py:2717: DtypeWarning: Columns (38,49,57) have mixed types. Specify dtype option on import or set low_memory=False.
-  interactivity=interactivity, compiler=compiler, result=result)
-</pre>
-</div>
-</div>
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>105085 13954
-18192 9747
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">ftres_all</span><span class="p">]</span>
-<span class="n">sample_df</span> <span class="o">=</span> <span class="n">sample_df</span><span class="p">[</span><span class="n">ftres_all</span><span class="p">]</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># show</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Prior to applying memory-based collaborative filtering, we first organized the data into a dataframe</span>
+<span class="c1"># where each row is a pair of user and restaurant review rating. </span>
 <span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 
@@ -20673,7 +20544,7 @@ $${\mathit{R}\mathit{M}\mathit{S}\mathit{E}} = \sqrt{\frac{1}{N}\sum(x_{i} - \ha
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[6]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[8]:</div>
 
 <div class="output_html rendered_html output_subarea output_execute_result">
 <div>
@@ -20746,22 +20617,22 @@ $${\mathit{R}\mathit{M}\mathit{S}\mathit{E}} = \sqrt{\frac{1}{N}\sum(x_{i} - \ha
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Next we will perform memory-based collaborative filtering. There will be two portions of this - item-item collaborative filtering, and user-item collaborative filtering.</p>
-<p>Item-Item collaborative filtering: "Users who liked this restaurant also liked ..."</p>
-<p>User-Item collaborative filtering: "Users who are similar to you also liked ..."</p>
+<p>Using the above dataframe, we performed memory-based collaborative filtering. There will be two portions of this - item-item collaborative filtering, and user-item collaborative filtering.</p>
+<ol>
+<li>Item-Item collaborative filtering: "Users who liked this restaurant also liked ..."</li>
+<li>User-Item collaborative filtering: "Users who are similar to you also liked ..."</li>
+</ol>
 <p>This requires us to create a user-item matrix, with one axis being the users, and another axis being the restaurants. Each value will represent the rating for that user and restaurant. We will create a training matrix with 75% of the observations, and a test matrix with 25% of the observations.</p>
-<p>todo: insert pic-1 here</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># show</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">create_matrix()</span>
 
 <span class="sd">-transforms a dataframe into a user-item matrix</span>
@@ -20790,18 +20661,17 @@ $${\mathit{R}\mathit{M}\mathit{S}\mathit{E}} = \sqrt{\frac{1}{N}\sum(x_{i} - \ha
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The dimensions of the matrices are (n_users * n_items). This causes the matrix to be quite large.</p>
+<p>The dimensions of the matrices are (n_users * n_items). This causes the matrix to be quite large. Because the large size of the data is computationally too costly, we decided to use a random sample of the entire data set.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># show</span>
-<span class="n">train</span><span class="p">,</span> <span class="n">test</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">train_test_split</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span> <span class="c1">#split dataframe into train/test</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">train</span><span class="p">,</span> <span class="n">test</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">train_test_split</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span> <span class="c1">#split dataframe into train/test</span>
 <span class="n">sample_train</span><span class="p">,</span> <span class="n">sample_test</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">train_test_split</span><span class="p">(</span><span class="n">sample_df</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
 
 <span class="n">train_matrix</span> <span class="o">=</span> <span class="n">create_matrix</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">n_users</span><span class="p">,</span> <span class="n">n_items</span><span class="p">)</span>
@@ -20834,13 +20704,22 @@ $${\mathit{R}\mathit{M}\mathit{S}\mathit{E}} = \sqrt{\frac{1}{N}\sum(x_{i} - \ha
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Using the user-item matrix (sample data, not the entire set), we computed the item-item similarity and user-item similarity. Since the ratings are all positive, the output will range from 0 to 1.</p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#since the ratings are all positive, the output will range from 0 to 1</span>
-<span class="n">sample_user_similarity</span> <span class="o">=</span> <span class="n">pairwise_distances</span><span class="p">(</span><span class="n">sample_train_matrix</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;cosine&#39;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sample_user_similarity</span> <span class="o">=</span> <span class="n">pairwise_distances</span><span class="p">(</span><span class="n">sample_train_matrix</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;cosine&#39;</span><span class="p">)</span>
 <span class="n">sample_item_similarity</span> <span class="o">=</span> <span class="n">pairwise_distances</span><span class="p">(</span><span class="n">sample_train_matrix</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;cosine&#39;</span><span class="p">)</span>
 </pre></div>
 
@@ -20861,11 +20740,10 @@ $${\mathit{R}\mathit{M}\mathit{S}\mathit{E}} = \sqrt{\frac{1}{N}\sum(x_{i} - \ha
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># show</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">memory_based_prediction()</span>
 
 <span class="sd">-uses the cosine similarity to make predictions for user-item ratings</span>
@@ -20893,7 +20771,7 @@ $${\mathit{R}\mathit{M}\mathit{S}\mathit{E}} = \sqrt{\frac{1}{N}\sum(x_{i} - \ha
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">sample_item_prediction</span> <span class="o">=</span> <span class="n">memory_based_prediction</span><span class="p">(</span><span class="n">sample_train_matrix</span><span class="p">,</span> <span class="n">sample_item_similarity</span><span class="p">)</span>
@@ -20906,31 +20784,6 @@ $${\mathit{R}\mathit{M}\mathit{S}\mathit{E}} = \sqrt{\frac{1}{N}\sum(x_{i} - \ha
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># show</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">rmse()</span>
-<span class="sd">-computes the root mean squared error for a models&#39; predictions</span>
-
-<span class="sd">inputs: rating prediction, actual rating</span>
-<span class="sd">outputs: random mean squared error</span>
-
-<span class="sd">&quot;&quot;&quot;</span>
-
-
-<span class="k">def</span> <span class="nf">rmse</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y_hat</span><span class="p">):</span>
-    <span class="n">y_hat</span> <span class="o">=</span> <span class="n">y_hat</span><span class="p">[</span><span class="n">y</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="c1">#only consider predicted ratings that are in the dataset</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">y</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-    <span class="n">rmse</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">rmse</span>
-</pre></div>
-
-</div>
-</div>
-</div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered">
@@ -20945,11 +20798,11 @@ $${\mathit{R}\mathit{M}\mathit{S}\mathit{E}} = \sqrt{\frac{1}{N}\sum(x_{i} - \ha
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># show</span>
-<span class="n">rmse</span><span class="p">(</span><span class="n">sample_test_matrix</span><span class="p">,</span><span class="n">sample_user_prediction</span><span class="p">),</span> <span class="n">rmse</span><span class="p">(</span><span class="n">sample_test_matrix</span><span class="p">,</span><span class="n">sample_item_prediction</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;user-item based collaborative filtering RMSE: &quot;</span><span class="p">,</span> <span class="n">rmse</span><span class="p">(</span><span class="n">sample_test_matrix</span><span class="p">,</span><span class="n">sample_user_prediction</span><span class="p">))</span> 
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;item-item based collaborative filtering RMSE: &quot;</span><span class="p">,</span> <span class="n">rmse</span><span class="p">(</span><span class="n">sample_test_matrix</span><span class="p">,</span><span class="n">sample_item_prediction</span><span class="p">))</span> 
 </pre></div>
 
 </div>
@@ -20960,13 +20813,12 @@ $${\mathit{R}\mathit{M}\mathit{S}\mathit{E}} = \sqrt{\frac{1}{N}\sum(x_{i} - \ha
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[13]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>(3.9086131442629446, 3.911785731221228)</pre>
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>user-item based collaborative filtering RMSE:  3.9056340471132587
+item-item based collaborative filtering RMSE:  3.9087709786307827
+</pre>
 </div>
-
 </div>
 
 </div>
@@ -20978,7 +20830,27 @@ $${\mathit{R}\mathit{M}\mathit{S}\mathit{E}} = \sqrt{\frac{1}{N}\sum(x_{i} - \ha
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We see that our dataframe is very sparce (&gt;99.9%).</p>
+<p><a id='modelcf'></a>
+<a href="#top">back to top</a></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Model-based-Collaborative-Filtering">Model-based Collaborative Filtering<a class="anchor-link" href="#Model-based-Collaborative-Filtering">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Because there is not a huge overlap between all users and all restaurants, we observed that our dataframe is very sparce (&gt;99.9%), as expected. Given this sparsity, we also implemented model-based CF that is able to deal with sparsity better than memory-based CF.</p>
 
 </div>
 </div>
@@ -20988,9 +20860,8 @@ $${\mathit{R}\mathit{M}\mathit{S}\mathit{E}} = \sqrt{\frac{1}{N}\sum(x_{i} - \ha
 <div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># show</span>
-<span class="n">sparsity</span><span class="o">=</span><span class="nb">round</span><span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">n_users</span><span class="o">*</span><span class="n">n_items</span><span class="p">),</span><span class="mi">10</span><span class="p">)</span>
-<span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">n_users</span><span class="o">*</span><span class="n">n_items</span><span class="p">),</span> <span class="n">sparsity</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sparsity</span><span class="o">=</span><span class="nb">round</span><span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">n_users</span><span class="o">*</span><span class="n">n_items</span><span class="p">),</span><span class="mi">10</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;percent sparsity = &quot;</span><span class="p">,</span> <span class="n">sparsity</span><span class="p">)</span> 
 </pre></div>
 
 </div>
