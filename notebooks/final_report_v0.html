@@ -11847,8 +11847,7 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># show try again.</span>
-<span class="k">def</span> <span class="nf">json_to_csv</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">fileNames</span><span class="p">,</span> <span class="n">createSample</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">json_to_csv</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">fileNames</span><span class="p">,</span> <span class="n">createSample</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    json_to_csv: loops through specified JSON files and converts them to csv files.</span>
 <span class="sd">                 option to also create a sample csv, which uses np.random.seed 9001 to create a sample dataset with 10% of the observations</span>
@@ -11899,37 +11898,6 @@ div#notebook {
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">fileNameList</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;user.json&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;business.json&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;review.json&#39;</span><span class="p">]</span>
-
-<span class="n">json_to_csv</span><span class="p">(</span><span class="s1">&#39;data/&#39;</span><span class="p">,</span> <span class="n">fileNameList</span><span class="p">,</span> <span class="n">createSample</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>review.json opened
-review.csv created
-review_sample.csv created
-This function took 7.314122831821441 minutes to run
-</pre>
-</div>
-</div>
-
-</div>
-</div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered">
@@ -11948,58 +11916,9 @@ The business dataset had a variable, attributes, that was a string of a dictiona
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">find_ftres_with_nan</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
-    <span class="n">all_nan</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">()]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-    <span class="n">some_nan</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;All NaN Features: &quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_nan</span><span class="p">),</span> <span class="n">all_nan</span><span class="p">,</span> <span class="s2">&quot;Some NaN Features: &quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">some_nan</span><span class="p">),</span> <span class="n">some_nan</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">all_nan</span><span class="p">,</span> <span class="n">some_nan</span>
-</pre></div>
-
-</div>
-</div>
-</div>
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">business</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;data/business.csv&#39;</span><span class="p">,</span><span class="n">encoding</span> <span class="o">=</span> <span class="s2">&quot;ISO-8859-1&quot;</span><span class="p">,</span><span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">all_nan</span><span class="p">,</span> <span class="n">some_nan</span> <span class="o">=</span> <span class="n">find_ftres_with_nan</span><span class="p">(</span><span class="n">business</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>//anaconda/envs/snakes/lib/python3.5/site-packages/IPython/core/interactiveshell.py:2717: DtypeWarning: Columns (1,2,4,5,6,19,21,23,28,29,32,34,35) have mixed types. Specify dtype option on import or set low_memory=False.
-  interactivity=interactivity, compiler=compiler, result=result)
-//anaconda/envs/snakes/lib/python3.5/site-packages/numpy/lib/arraysetops.py:463: FutureWarning: elementwise comparison failed; returning scalar instead, but in the future will perform elementwise comparison
-  mask |= (ar1 == a)
-</pre>
-</div>
-</div>
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>All NaN Features:  0 [] Some NaN Features:  34 [&#39;address&#39;, &#39;attributes&#39;, &#39;average_stars&#39;, &#39;business_id&#39;, &#39;categories&#39;, &#39;city&#39;, &#39;compliment_cool&#39;, &#39;compliment_cute&#39;, &#39;compliment_funny&#39;, &#39;compliment_hot&#39;, &#39;compliment_list&#39;, &#39;compliment_more&#39;, &#39;compliment_note&#39;, &#39;compliment_photos&#39;, &#39;compliment_plain&#39;, &#39;compliment_profile&#39;, &#39;compliment_writer&#39;, &#39;cool&#39;, &#39;elite&#39;, &#39;fans&#39;, &#39;friends&#39;, &#39;funny&#39;, &#39;hours&#39;, &#39;is_open&#39;, &#39;latitude&#39;, &#39;longitude&#39;, &#39;name&#39;, &#39;neighborhood&#39;, &#39;postal_code&#39;, &#39;stars&#39;, &#39;state&#39;, &#39;useful&#39;, &#39;user_id&#39;, &#39;yelping_since&#39;]
-</pre>
-</div>
-</div>
-
-</div>
-</div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered">
@@ -12017,8 +11936,7 @@ The business dataset had a variable, attributes, that was a string of a dictiona
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># show</span>
-<span class="n">mask_restaurants</span> <span class="o">=</span> <span class="n">business</span><span class="p">[</span><span class="s1">&#39;categories&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">&#39;Restaurants&#39;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">mask_restaurants</span> <span class="o">=</span> <span class="n">business</span><span class="p">[</span><span class="s1">&#39;categories&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">&#39;Restaurants&#39;</span><span class="p">)</span>
 <span class="n">mask_restaurants</span> <span class="o">=</span> <span class="n">business</span><span class="p">[</span><span class="s1">&#39;categories&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">&#39;Restaurants&#39;</span><span class="p">)</span>
 <span class="n">mask_food</span> <span class="o">=</span> <span class="n">business</span><span class="p">[</span><span class="s1">&#39;categories&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">&#39;Food&#39;</span><span class="p">)</span>
 <span class="n">restaurants_and_food</span> <span class="o">=</span> <span class="n">business</span><span class="p">[</span><span class="n">mask_restaurants</span> <span class="o">&amp;</span> <span class="n">mask_food</span><span class="p">]</span>
@@ -12061,8 +11979,7 @@ The business dataset had a variable, attributes, that was a string of a dictiona
 <div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># show </span>
-<span class="n">restaurants_and_food</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">1</span><span class="p">)[</span><span class="s1">&#39;categories&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">restaurants_and_food</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">1</span><span class="p">)[</span><span class="s1">&#39;categories&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
 </pre></div>
 
 </div>
@@ -12097,17 +12014,6 @@ The business dataset had a variable, attributes, that was a string of a dictiona
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">categoryDF</span> <span class="o">=</span> <span class="n">restaurants_and_food</span><span class="p">[</span><span class="s1">&#39;categories&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span>
-<span class="n">uniqueCategories</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">categoryDF</span><span class="o">.</span><span class="n">stack</span><span class="p">()</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
-</pre></div>
-
-</div>
-</div>
-</div>
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
@@ -12115,8 +12021,7 @@ The business dataset had a variable, attributes, that was a string of a dictiona
 <div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># show</span>
-<span class="n">categoriesToRemove</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Grocery&#39;</span><span class="p">,</span><span class="s1">&#39;Drugstores&#39;</span><span class="p">,</span><span class="s1">&#39;Convenience Stores&#39;</span><span class="p">,</span><span class="s1">&#39;Beauty &amp; Spas&#39;</span><span class="p">,</span><span class="s1">&#39;Photography Stores &amp; Services&#39;</span><span class="p">,</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">categoriesToRemove</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Grocery&#39;</span><span class="p">,</span><span class="s1">&#39;Drugstores&#39;</span><span class="p">,</span><span class="s1">&#39;Convenience Stores&#39;</span><span class="p">,</span><span class="s1">&#39;Beauty &amp; Spas&#39;</span><span class="p">,</span><span class="s1">&#39;Photography Stores &amp; Services&#39;</span><span class="p">,</span>
                       <span class="s1">&#39;Cosmetics &amp; Beauty Supply&#39;</span><span class="p">,</span><span class="s1">&#39;Discount Store&#39;</span><span class="p">,</span><span class="s1">&#39;Fashion&#39;</span><span class="p">,</span><span class="s1">&#39;Department Stores&#39;</span><span class="p">,</span><span class="s1">&#39;Gas Stations&#39;</span><span class="p">,</span>
                       <span class="s1">&#39;Automotive&#39;</span><span class="p">,</span><span class="s1">&#39;Music &amp; Video&#39;</span><span class="p">,</span><span class="s1">&#39;Event Planning &amp; Services&#39;</span><span class="p">,</span><span class="s1">&#39;Mobile Phones&#39;</span><span class="p">,</span><span class="s1">&#39;Health &amp; Medical&#39;</span><span class="p">,</span>
                       <span class="s1">&#39;Weight Loss Centers&#39;</span><span class="p">,</span><span class="s1">&#39;Home &amp; Garden&#39;</span><span class="p">,</span><span class="s1">&#39;Kitchen &amp; Bath&#39;</span><span class="p">,</span><span class="s1">&#39;Jewelry&#39;</span><span class="p">,</span><span class="s2">&quot;Children&#39;s Clothing&quot;</span><span class="p">,</span>
@@ -12139,16 +12044,6 @@ The business dataset had a variable, attributes, that was a string of a dictiona
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">restaurants_df</span> <span class="o">=</span> <span class="n">restaurants_and_food</span><span class="p">[</span><span class="o">~</span><span class="n">restaurants_and_food</span><span class="p">[</span><span class="s1">&#39;categories&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">&#39;|&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">categoriesToRemove</span><span class="p">))]</span>
-</pre></div>
-
-</div>
-</div>
-</div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered">
@@ -12162,32 +12057,6 @@ The business dataset had a variable, attributes, that was a string of a dictiona
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">restaurants_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;data/restaurants.csv&#39;</span><span class="p">)</span>
-<span class="n">restaurants_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;data/restaurants.csv&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;ISO-8859-1&#39;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">all_nan</span><span class="p">,</span> <span class="n">some_nan</span> <span class="o">=</span> <span class="n">find_ftres_with_nan</span><span class="p">(</span><span class="n">restaurants_df</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>All NaN Features:  20 [&#39;average_stars&#39;, &#39;compliment_cool&#39;, &#39;compliment_cute&#39;, &#39;compliment_funny&#39;, &#39;compliment_hot&#39;, &#39;compliment_list&#39;, &#39;compliment_more&#39;, &#39;compliment_note&#39;, &#39;compliment_photos&#39;, &#39;compliment_plain&#39;, &#39;compliment_profile&#39;, &#39;compliment_writer&#39;, &#39;cool&#39;, &#39;elite&#39;, &#39;fans&#39;, &#39;friends&#39;, &#39;funny&#39;, &#39;useful&#39;, &#39;user_id&#39;, &#39;yelping_since&#39;] Some NaN Features:  23 [&#39;address&#39;, &#39;average_stars&#39;, &#39;compliment_cool&#39;, &#39;compliment_cute&#39;, &#39;compliment_funny&#39;, &#39;compliment_hot&#39;, &#39;compliment_list&#39;, &#39;compliment_more&#39;, &#39;compliment_note&#39;, &#39;compliment_photos&#39;, &#39;compliment_plain&#39;, &#39;compliment_profile&#39;, &#39;compliment_writer&#39;, &#39;cool&#39;, &#39;elite&#39;, &#39;fans&#39;, &#39;friends&#39;, &#39;funny&#39;, &#39;neighborhood&#39;, &#39;postal_code&#39;, &#39;useful&#39;, &#39;user_id&#39;, &#39;yelping_since&#39;]
-</pre>
-</div>
-</div>
-
-</div>
-</div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered">
@@ -12215,8 +12084,7 @@ The business dataset had a variable, attributes, that was a string of a dictiona
 <div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># show </span>
-<span class="n">restaurants_df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">restaurants_df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12313,8 +12181,7 @@ The business dataset had a variable, attributes, that was a string of a dictiona
 <div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># show</span>
-<span class="c1">#create_attributes</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#create_attributes</span>
 
 <span class="c1">#takes a dataframe as an input, as well as a list of columns that are dictionaries</span>
 <span class="c1">#takes each column that is a dictionary, and expands it into a series of dummy columns</span>
@@ -12349,8 +12216,7 @@ The business dataset had a variable, attributes, that was a string of a dictiona
 <div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># show</span>
-<span class="k">def</span> <span class="nf">expand_categories</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">cat_var</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">expand_categories</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">cat_var</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
     <span class="n">all_cats</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">cat_var</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">sep</span><span class="o">=</span><span class="s1">&#39;, &#39;</span><span class="p">)</span>
     <span class="n">all_cats</span> <span class="o">=</span> <span class="n">all_cats</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
     <span class="n">all_cats</span> <span class="o">=</span> <span class="n">all_cats</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;]&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
@@ -12373,41 +12239,6 @@ The business dataset had a variable, attributes, that was a string of a dictiona
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dictList</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;attributes&#39;</span><span class="p">,</span> <span class="s1">&#39;Ambience&#39;</span><span class="p">,</span> <span class="s1">&#39;BestNights&#39;</span><span class="p">,</span> <span class="s1">&#39;BusinessParking&#39;</span><span class="p">,</span><span class="s1">&#39;Music&#39;</span><span class="p">,</span><span class="s1">&#39;GoodForMeal&#39;</span><span class="p">]</span>
-<span class="n">expanded</span> <span class="o">=</span> <span class="n">create_attributes</span><span class="p">(</span><span class="n">restaurants_df</span><span class="p">[[</span><span class="s1">&#39;business_id&#39;</span><span class="p">,</span><span class="s1">&#39;attributes&#39;</span><span class="p">]],</span> <span class="n">dictList</span><span class="p">)</span>
-<span class="n">dropColumns</span> <span class="o">=</span> <span class="n">expanded</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">keepColumns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">compress</span><span class="p">(</span><span class="n">expanded</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="o">~</span><span class="n">dropColumns</span><span class="p">))</span>
-<span class="n">expanded</span> <span class="o">=</span> <span class="n">expanded</span><span class="p">[</span><span class="n">keepColumns</span><span class="p">]</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>//anaconda/envs/snakes/lib/python3.5/site-packages/pandas/core/indexes/api.py:77: RuntimeWarning: unorderable types: int() &gt; str(), sort order is undefined for incomparable objects
-  result = result.union(other)
-//anaconda/envs/snakes/lib/python3.5/site-packages/pandas/core/indexes/api.py:43: RuntimeWarning: unorderable types: int() &gt; str(), sort order is undefined for incomparable objects
-  union = _union_indexes(indexes)
-//anaconda/envs/snakes/lib/python3.5/site-packages/pandas/core/indexes/api.py:77: RuntimeWarning: unorderable types: str() &gt; int(), sort order is undefined for incomparable objects
-  result = result.union(other)
-//anaconda/envs/snakes/lib/python3.5/site-packages/pandas/core/indexes/api.py:43: RuntimeWarning: unorderable types: str() &gt; int(), sort order is undefined for incomparable objects
-  union = _union_indexes(indexes)
-</pre>
-</div>
-</div>
-
-</div>
-</div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered">
@@ -12518,50 +12349,9 @@ The business dataset had a variable, attributes, that was a string of a dictiona
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## Join expanded with restaurants_df</span>
-<span class="n">restaurants_df</span> <span class="o">=</span> <span class="n">restaurants_df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">expanded</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">left_on</span><span class="o">=</span><span class="s1">&#39;business_id&#39;</span><span class="p">,</span> <span class="n">right_on</span><span class="o">=</span><span class="s1">&#39;business_id&#39;</span><span class="p">)</span>
-<span class="n">restaurants_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;attributes&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">restaurants_df</span> <span class="o">=</span> <span class="n">expand_categories</span><span class="p">(</span><span class="n">restaurants_df</span><span class="p">,</span> <span class="s1">&#39;categories&#39;</span><span class="p">,</span> <span class="s1">&#39;business_id&#39;</span><span class="p">)</span>
-<span class="n">restaurants_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;categories&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="c1"># Variables that won&#39;t be used</span>
-<span class="n">rest_vars_to_drop</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;address&#39;</span><span class="p">,</span> <span class="s1">&#39;hours&#39;</span><span class="p">,</span> <span class="s1">&#39;latitude&#39;</span><span class="p">,</span> <span class="s1">&#39;longitude&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">]</span>
-<span class="n">restaurants_final</span> <span class="o">=</span> <span class="n">restaurants_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">rest_vars_to_drop</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">restaurants_final</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;data/restaurants_final.csv&#39;</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>//anaconda/envs/snakes/lib/python3.5/site-packages/ipykernel/__main__.py:15: UserWarning: This pattern has match groups. To actually get the groups, use str.extract.
-</pre>
-</div>
-</div>
-
-</div>
-</div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered">
@@ -12579,8 +12369,7 @@ The business dataset had a variable, attributes, that was a string of a dictiona
 <div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># show</span>
-<span class="k">def</span> <span class="nf">reduce_review</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">business_list</span><span class="p">):</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">reduce_review</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">business_list</span><span class="p">):</span>
     
     <span class="c1">#drop columns where business_id or user_id is null</span>
     <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;business_id&#39;</span><span class="p">,</span><span class="s1">&#39;user_id&#39;</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;any&#39;</span><span class="p">,</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -12603,51 +12392,6 @@ The business dataset had a variable, attributes, that was a string of a dictiona
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">review</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;data/review.csv&#39;</span><span class="p">,</span><span class="n">encoding</span> <span class="o">=</span> <span class="s2">&quot;ISO-8859-1&quot;</span><span class="p">,</span><span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">restaurant_reviews</span> <span class="o">=</span> <span class="n">reduce_review</span><span class="p">(</span><span class="n">review</span><span class="p">,</span> <span class="n">restaurants_final</span><span class="p">[</span><span class="s1">&#39;business_id&#39;</span><span class="p">])</span> <span class="c1">#create dataframe</span>
-<span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">find_ftres_with_nan</span><span class="p">(</span><span class="n">restaurant_reviews</span><span class="p">)</span> <span class="c1">#report if there are null values</span>
-
-<span class="n">restaurant_reviews</span><span class="p">[</span><span class="s1">&#39;review_date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">restaurant_reviews</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">])</span>
-<span class="n">restaurant_reviews</span><span class="p">[</span><span class="s1">&#39;review_year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">restaurant_reviews</span><span class="p">[</span><span class="s1">&#39;review_date&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">year</span>
-<span class="n">restaurant_reviews</span><span class="p">[</span><span class="s1">&#39;review_month&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">restaurant_reviews</span><span class="p">[</span><span class="s1">&#39;review_date&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">month</span>
-<span class="n">restaurant_reviews</span><span class="p">[</span><span class="s1">&#39;review_weekday&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">restaurant_reviews</span><span class="p">[</span><span class="s1">&#39;review_date&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">weekday_name</span>
-
-<span class="n">rename_cols</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;cool&#39;</span><span class="p">:</span> <span class="s1">&#39;review_cool&#39;</span><span class="p">,</span><span class="s1">&#39;funny&#39;</span><span class="p">:</span><span class="s1">&#39;review_funny&#39;</span><span class="p">,</span><span class="s1">&#39;stars&#39;</span><span class="p">:</span><span class="s1">&#39;review_stars&#39;</span><span class="p">,</span><span class="s1">&#39;useful&#39;</span><span class="p">:</span><span class="s1">&#39;review_useful&#39;</span><span class="p">}</span>
-<span class="n">restaurant_reviews</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">rename_cols</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">review_cols_to_drop</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="s1">&#39;review_date&#39;</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span><span class="p">]</span>
-<span class="n">restaurant_reviews</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">review_cols_to_drop</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>//anaconda/envs/snakes/lib/python3.5/site-packages/IPython/core/interactiveshell.py:2717: DtypeWarning: Columns (0,2) have mixed types. Specify dtype option on import or set low_memory=False.
-  interactivity=interactivity, compiler=compiler, result=result)
-</pre>
-</div>
-</div>
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>The minimum amount of reviews per user is 2
-All NaN Features:  0 [] Some NaN Features:  0 []
-</pre>
-</div>
-</div>
-
-</div>
-</div>
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
@@ -12655,8 +12399,7 @@ All NaN Features:  0 [] Some NaN Features:  0 []
 <div class="prompt input_prompt">In&nbsp;[20]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># show</span>
-<span class="n">restaurant_reviews</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">restaurant_reviews</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -12778,64 +12521,9 @@ All NaN Features:  0 [] Some NaN Features:  0 []
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">restaurant_reviews</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;data/restaurant_reviews_final.csv&#39;</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[22]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">users_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;data/user.csv&#39;</span><span class="p">,</span><span class="n">encoding</span> <span class="o">=</span> <span class="s2">&quot;ISO-8859-1&quot;</span><span class="p">,</span><span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">users_w_reviews</span> <span class="o">=</span> <span class="n">users_df</span><span class="p">[</span><span class="n">users_df</span><span class="p">[</span><span class="s1">&#39;user_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">restaurant_reviews</span><span class="p">[</span><span class="s1">&#39;user_id&#39;</span><span class="p">])]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-
-<span class="n">list_user_vars</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;average_stars&#39;</span><span class="p">,</span> <span class="s1">&#39;compliment_cool&#39;</span><span class="p">,</span> <span class="s1">&#39;compliment_cute&#39;</span><span class="p">,</span> <span class="s1">&#39;compliment_funny&#39;</span><span class="p">,</span> 
-                  <span class="s1">&#39;compliment_hot&#39;</span><span class="p">,</span> <span class="s1">&#39;compliment_list&#39;</span><span class="p">,</span> <span class="s1">&#39;compliment_more&#39;</span><span class="p">,</span> <span class="s1">&#39;compliment_note&#39;</span><span class="p">,</span> 
-                  <span class="s1">&#39;compliment_photos&#39;</span><span class="p">,</span> <span class="s1">&#39;compliment_plain&#39;</span><span class="p">,</span> <span class="s1">&#39;compliment_profile&#39;</span><span class="p">,</span> 
-                  <span class="s1">&#39;compliment_writer&#39;</span><span class="p">,</span> <span class="s1">&#39;cool&#39;</span><span class="p">,</span> <span class="s1">&#39;elite&#39;</span><span class="p">,</span> <span class="s1">&#39;fans&#39;</span><span class="p">,</span> <span class="s1">&#39;friends&#39;</span><span class="p">,</span> <span class="s1">&#39;funny&#39;</span><span class="p">,</span> 
-                  <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;review_count&#39;</span><span class="p">,</span> <span class="s1">&#39;useful&#39;</span><span class="p">]</span>
-<span class="n">vars_to_rename_users</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">list_user_vars</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;user_&#39;</span> <span class="o">+</span> <span class="n">var</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">list_user_vars</span><span class="p">]))</span>
-<span class="n">users_w_reviews</span> <span class="o">=</span> <span class="n">users_w_reviews</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">vars_to_rename_users</span><span class="p">)</span>
-
-<span class="n">users_w_reviews</span><span class="p">[</span><span class="s1">&#39;yelping_since&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">users_w_reviews</span><span class="p">[</span><span class="s1">&#39;yelping_since&#39;</span><span class="p">])</span>
-<span class="n">users_w_reviews</span><span class="p">[</span><span class="s1">&#39;yelping_since&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">users_w_reviews</span><span class="p">[</span><span class="s1">&#39;yelping_since&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">year</span>
-
-<span class="n">users_w_reviews</span><span class="p">[</span><span class="s1">&#39;user_elite_flag&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">users_w_reviews</span><span class="p">[</span><span class="s1">&#39;user_elite&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span>
-<span class="n">users_w_reviews</span><span class="p">[</span><span class="s1">&#39;user_friends_flag&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">users_w_reviews</span><span class="p">[</span><span class="s1">&#39;user_friends&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span>
-
-<span class="n">users_cols_to_drop</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;user_elite&#39;</span><span class="p">,</span> <span class="s1">&#39;user_friends&#39;</span><span class="p">,</span> <span class="s1">&#39;user_name&#39;</span><span class="p">]</span>
-<span class="n">users_w_reviews</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">users_cols_to_drop</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="n">users_w_reviews</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;data/user_final.csv&#39;</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>//anaconda/envs/snakes/lib/python3.5/site-packages/numpy/lib/arraysetops.py:463: FutureWarning: elementwise comparison failed; returning scalar instead, but in the future will perform elementwise comparison
-  mask |= (ar1 == a)
-</pre>
-</div>
-</div>
-
-</div>
-</div>
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
@@ -12843,8 +12531,7 @@ All NaN Features:  0 [] Some NaN Features:  0 []
 <div class="prompt input_prompt">In&nbsp;[23]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># show </span>
-<span class="n">users_w_reviews</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">users_w_reviews</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12947,32 +12634,9 @@ All NaN Features:  0 [] Some NaN Features:  0 []
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[30]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">recommendations_p1</span> <span class="o">=</span> <span class="n">restaurant_reviews</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">restaurants_final</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;business_id&#39;</span><span class="p">)</span>
-<span class="n">recommendations_p1</span><span class="p">[</span><span class="s1">&#39;user_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">recommendations_p1</span><span class="p">[</span><span class="s1">&#39;user_id_x&#39;</span><span class="p">]</span>
-<span class="n">recommendations_p1</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;user_id_x&#39;</span><span class="p">])</span>
-<span class="n">recommendations</span> <span class="o">=</span> <span class="n">recommendations_p1</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">users_w_reviews</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;user_id&#39;</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[34]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">recommendations</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;data/recommendations.csv&#39;</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
@@ -12980,8 +12644,7 @@ All NaN Features:  0 [] Some NaN Features:  0 []
 <div class="prompt input_prompt">In&nbsp;[32]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># show</span>
-<span class="n">recommendations</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">recommendations</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 
 </div>
