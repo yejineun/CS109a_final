@@ -11785,6 +11785,7 @@ div#notebook {
 </ul>
 </li>
 </ul>
+<p>Note: We have hidden most of the code in the notebook and displayed important cells for better readability.</p>
 
 </div>
 </div>
@@ -11918,9 +11919,9 @@ div#notebook {
 <h3 id="Keeping-only-&quot;restaurant&quot;-business-data-and-other-associated-data-on-users-and-reviews">Keeping only "restaurant" business data and other associated data on users and reviews<a class="anchor-link" href="#Keeping-only-&quot;restaurant&quot;-business-data-and-other-associated-data-on-users-and-reviews">&#182;</a></h3><p>We reduced the business dataset to businesses that had “Restaurant” or “Food” in the category (restaurants). We then removed observations that had other “non-restaurant” categories, such as “Grocery”, “Auto Glass Services”, “Business Consulting”, etc. After reducing the business dataset, we reduced our review dataset in two ways:</p>
 <ul>
 <li>Only including reviews for businesses that existed in the reduced business (restaurant) dataset </li>
-<li>Only including reviews for users that have at least 2 reviews (A single rating does not help determine similarities between restaurants)
-The business dataset had a variable, attributes, that was a string of a dictionary. We evaluated this string as a dictionary and applied pd.Series across the result, which expanded this dictionary into multiple Boolean columns, as well as a few more dictionary columns. All remaining dictionary columns were manipulated in the same manner, leaving us ~70 Boolean columns. The business dataset also had a variable, categories, that was a string of a list. We expanded this list into separate columns for each category. Lastly, we then reduced our user dataset by filtering to users that existed in the reduced review dataset. </li>
+<li>Only including reviews for users that have at least 2 reviews (A single rating does not help determine similarities between restaurants)</li>
 </ul>
+<p>In summary, we began with 156,639 observations. 15,502 of these observations contained "Food" or "Restaurants". After removing observations with irrelevant categories, we are left with 14,032 total observations.</p>
 
 </div>
 </div>
@@ -11946,10 +11947,16 @@ The business dataset had a variable, attributes, that was a string of a dictiona
 <div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">mask_restaurants</span> <span class="o">=</span> <span class="n">business</span><span class="p">[</span><span class="s1">&#39;categories&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">&#39;Restaurants&#39;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># create a mask for restaurants</span>
 <span class="n">mask_restaurants</span> <span class="o">=</span> <span class="n">business</span><span class="p">[</span><span class="s1">&#39;categories&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">&#39;Restaurants&#39;</span><span class="p">)</span>
+
+<span class="c1"># create a mask for food</span>
 <span class="n">mask_food</span> <span class="o">=</span> <span class="n">business</span><span class="p">[</span><span class="s1">&#39;categories&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">&#39;Food&#39;</span><span class="p">)</span>
+
+<span class="c1"># apply both masks</span>
 <span class="n">restaurants_and_food</span> <span class="o">=</span> <span class="n">business</span><span class="p">[</span><span class="n">mask_restaurants</span> <span class="o">&amp;</span> <span class="n">mask_food</span><span class="p">]</span>
+
+<span class="c1"># number of businesses that have food and restaurant in their category</span>
 <span class="n">restaurants_and_food</span><span class="p">[</span><span class="s1">&#39;categories&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
 </pre></div>
 
@@ -11989,7 +11996,8 @@ The business dataset had a variable, attributes, that was a string of a dictiona
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">restaurants_and_food</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">1</span><span class="p">)[</span><span class="s1">&#39;categories&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># an example row</span>
+<span class="n">restaurants_and_food</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">1</span><span class="p">)[</span><span class="s1">&#39;categories&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
 </pre></div>
 
 </div>
@@ -12060,16 +12068,6 @@ The business dataset had a variable, attributes, that was a string of a dictiona
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>In summary, we began with 156,639 observations. 15,502 of these observations contained "Food" or "Restaurants". After removing observations with irrelevant categories, we are left with 14,032 total observations.</p>
-
-</div>
-</div>
-</div>
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
@@ -12078,10 +12076,74 @@ The business dataset had a variable, attributes, that was a string of a dictiona
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Expanding-business-attributes-&amp;-categories">Expanding business attributes &amp; categories<a class="anchor-link" href="#Expanding-business-attributes-&amp;-categories">&#182;</a></h3><p>After cleaning the business dataset, we expanded the attributes into boolean features.</p>
+<h3 id="Expanding-business-attributes-&amp;-categories">Expanding business attributes &amp; categories<a class="anchor-link" href="#Expanding-business-attributes-&amp;-categories">&#182;</a></h3><p>After cleaning the business dataset, we expanded the attributes into boolean features. The attributes were a collection of a string of a dictionary. We evaluated this string as a dictionary and applied pd.Series across the result, which expanded this dictionary into multiple Boolean columns, as well as a few more dictionary columns. All remaining dictionary columns were manipulated in the same manner, leaving us ~70 Boolean columns. The business dataset also had a variable, categories, that was a string of a list. We expanded this list into separate columns for each category. Lastly, we then reduced our user dataset by filtering to users that existed in the reduced review dataset. The following functions were used for this process.</p>
 
 </div>
 </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#create_attributes</span>
+
+<span class="c1">#takes a dataframe as an input, as well as a list of columns that are dictionaries</span>
+<span class="c1">#takes each column that is a dictionary, and expands it into a series of dummy columns</span>
+
+<span class="k">def</span> <span class="nf">create_attributes</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">dictList</span><span class="p">):</span>
+    
+    <span class="k">for</span> <span class="n">dictionaryColumn</span> <span class="ow">in</span> <span class="n">dictList</span><span class="p">:</span>
+        
+        <span class="c1">#the attributes column is a string of dictionaries, so one extra step is taken to convert</span>
+        <span class="k">if</span> <span class="n">dictionaryColumn</span> <span class="o">==</span> <span class="s1">&#39;attributes&#39;</span><span class="p">:</span>
+            <span class="n">expandedColumns</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">dictionaryColumn</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">eval</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">expandedColumns</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">dictionaryColumn</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span>
+        
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">dictionaryColumn</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> 
+                   <span class="n">expandedColumns</span><span class="p">]</span>
+                  <span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        
+        <span class="c1">#df.fillna(value=&#39;{}&#39;,inplace=True)</span>
+        
+    <span class="k">return</span> <span class="n">df</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">expand_categories</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">cat_var</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="n">all_cats</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">cat_var</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">sep</span><span class="o">=</span><span class="s1">&#39;, &#39;</span><span class="p">)</span>
+    <span class="n">all_cats</span> <span class="o">=</span> <span class="n">all_cats</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">all_cats</span> <span class="o">=</span> <span class="n">all_cats</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;]&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">all_cats</span> <span class="o">=</span> <span class="n">all_cats</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\&#39;</span><span class="s2">&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">all_cats</span> <span class="o">=</span> <span class="n">all_cats</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">all_cats_list</span> <span class="o">=</span> <span class="n">all_cats</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="p">)</span>
+    <span class="n">unique_cats</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">all_cats_list</span><span class="p">))</span>
+    <span class="n">unique_cats</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;Restaurants&#39;</span><span class="p">)</span>
+    <span class="n">unique_cats</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;Food&#39;</span><span class="p">)</span>
+    <span class="n">df_cats</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="n">unique_cats</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">df_out</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_cats</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">left_on</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="n">unique_cats</span><span class="p">:</span>
+        <span class="n">df_out</span><span class="p">[</span><span class="n">cat</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_out</span><span class="p">[</span><span class="n">cat_var</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">cat</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df_out</span>  
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+
 </div>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
@@ -12188,71 +12250,6 @@ The business dataset had a variable, attributes, that was a string of a dictiona
 
 </div>
 </div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#create_attributes</span>
-
-<span class="c1">#takes a dataframe as an input, as well as a list of columns that are dictionaries</span>
-<span class="c1">#takes each column that is a dictionary, and expands it into a series of dummy columns</span>
-
-
-<span class="k">def</span> <span class="nf">create_attributes</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">dictList</span><span class="p">):</span>
-    
-    <span class="k">for</span> <span class="n">dictionaryColumn</span> <span class="ow">in</span> <span class="n">dictList</span><span class="p">:</span>
-        
-        <span class="c1">#the attributes column is a string of dictionaries, so one extra step is taken to convert</span>
-        <span class="k">if</span> <span class="n">dictionaryColumn</span> <span class="o">==</span> <span class="s1">&#39;attributes&#39;</span><span class="p">:</span>
-            <span class="n">expandedColumns</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">dictionaryColumn</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">eval</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">expandedColumns</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">dictionaryColumn</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span>
-        
-        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">dictionaryColumn</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> 
-                   <span class="n">expandedColumns</span><span class="p">]</span>
-                  <span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        
-        <span class="c1">#df.fillna(value=&#39;{}&#39;,inplace=True)</span>
-        
-    <span class="k">return</span> <span class="n">df</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">expand_categories</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">cat_var</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-    <span class="n">all_cats</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">cat_var</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">sep</span><span class="o">=</span><span class="s1">&#39;, &#39;</span><span class="p">)</span>
-    <span class="n">all_cats</span> <span class="o">=</span> <span class="n">all_cats</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
-    <span class="n">all_cats</span> <span class="o">=</span> <span class="n">all_cats</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;]&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
-    <span class="n">all_cats</span> <span class="o">=</span> <span class="n">all_cats</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\&#39;</span><span class="s2">&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-    <span class="n">all_cats</span> <span class="o">=</span> <span class="n">all_cats</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-    <span class="n">all_cats_list</span> <span class="o">=</span> <span class="n">all_cats</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="p">)</span>
-    <span class="n">unique_cats</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">all_cats_list</span><span class="p">))</span>
-    <span class="n">unique_cats</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;Restaurants&#39;</span><span class="p">)</span>
-    <span class="n">unique_cats</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;Food&#39;</span><span class="p">)</span>
-    <span class="n">df_cats</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="n">unique_cats</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">df_out</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_cats</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">left_on</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="n">unique_cats</span><span class="p">:</span>
-        <span class="n">df_out</span><span class="p">[</span><span class="n">cat</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_out</span><span class="p">[</span><span class="n">cat_var</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">cat</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">df_out</span>  
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
 
 </div>
 <div class="cell border-box-sizing text_cell rendered">
