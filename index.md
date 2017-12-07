@@ -44,6 +44,8 @@ We downloaded a 5.6 GB TAR file from Yelp. This TAR file contained second TAR fi
 
 
 ```python
+# @hidden_cell
+
 import time
 import json
 import pandas as pd
@@ -56,10 +58,14 @@ import seaborn as sns
 ```
 
 
+    //anaconda/envs/snakes/lib/python3.5/site-packages/IPython/html.py:14: ShimWarning: The `IPython.html` package has been deprecated. You should import from `notebook` instead. `IPython.html.widgets` has moved to `ipywidgets`.
+      "`IPython.html.widgets` has moved to `ipywidgets`.", ShimWarning)
+
+
 
 
 ```python
-# show
+# show. with hidden cell added top. 
 def json_to_csv(directory, fileNames, createSample=False):
     """
     json_to_csv: loops through specified JSON files and converts them to csv files.
