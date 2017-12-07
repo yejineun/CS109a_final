@@ -44,8 +44,6 @@ We downloaded a 5.6 GB TAR file from Yelp. This TAR file contained second TAR fi
 
 
 ```python
-# @hidden_cell
-
 import time
 import json
 import pandas as pd
@@ -65,7 +63,7 @@ import seaborn as sns
 
 
 ```python
-# show. with hidden cell added top. 
+# show 
 def json_to_csv(directory, fileNames, createSample=False):
     """
     json_to_csv: loops through specified JSON files and converts them to csv files.
@@ -1566,8 +1564,8 @@ Before trying collaborative filtering which is based on user's experience with a
 
 ## 2. Matrix factorization
 
-https://cambridgespark.com/content/tutorials/implementing-your-own-recommender-systems-in-Python/index.html
-
+- https://cambridgespark.com/content/tutorials/implementing-your-own-recommender-systems-in-Python/index.html
+- https://towardsdatascience.com/how-to-build-a-simple-song-recommender-296fcbc8c85
 
 
 
@@ -1581,14 +1579,9 @@ https://cambridgespark.com/content/tutorials/implementing-your-own-recommender-s
 
 /// add a graphic here about baseline approach and what additional things we did
 
-## baseline modeling
+## I. Baseline modeling
 
-# Literature review / related work
-
-## 1. Creating a baseline model
-Before trying collaborative filtering which is based on user's experience with a particular restaurant, we first created a baseline model that captures the user's bias (e.g. some users are more likely to give higher ratings than others) and the bias of the restaurant (e.g. a restaurant could be a part of a national chain like Cheesecake Factory that has a higher brand power than Chipotle that recently suffered from mass infections). To this end, we relied on the method described in *Advances in Collaborative Filtering*, [(link)](https://datajobs.com/data-science-repo/Collaborative-Filtering-%5BKoren-and-Bell%5D.pdf) by Yehuda Koren's and Robert Bell.
-
-According to Koren and Bell, the baseline model can be expressed as the following:
+Using the method described in *Advances in Collaborative Filtering*, [(link)](https://datajobs.com/data-science-repo/Collaborative-Filtering-%5BKoren-and-Bell%5D.pdf) by Yehuda Koren's and Robert Bell, we created a baseline model with user bias and restaurant bias terms. According to Koren and Bell, the baseline model can be expressed as the following:
 
 $b_{u i} = \mu + b_{u} + b_{ i}$
 
@@ -1596,7 +1589,7 @@ where $\mu$ represents the mean of all ratings. $b_{u}$ and $b_{i}$ represent th
 
 In order to find the parameters $b_{u}$ and $b_{i}$, we used two approaches: 
 
-1. Use the formulas 
+### approach 1: Use the formulas given in the paper to find the bias
 
 $b_{i}$ = $\left(\frac{\sum u \epsilon R(i) (r_{ui} - \mu)}{\lambda_{2} + |R(i)|}\right)$
 
@@ -1604,21 +1597,10 @@ $b_{u}$ = $\left(\frac{\sum u \epsilon R(i) (r_{ui} - \mu)}{\lambda_{3} + |R(u)|
 
 Where $\lambda_{2}$ and $\lambda_{3}$ are the regularization parameters (to be chosen by cross-validation), R(i) represents all users who rated item $i$, and R(u) represents all items that user $u$ has rated.
 
+### approach 2: Use Ridge regression to find the bias terms
+We performed Ridge Regression using cross-validation.
 
-These next two functions will be applied to the dataframes iteratively. That is, we will loop through possible lambda2 and lambda3 values, and use cross-validation to determine which combination is optimal.
-
-
-These functions are defined here, but are not applied until Step 3, where we cross-validate.
-
-
-
-### approach 1:
-### approach 2:
-For this method, we determine the bias by subtracting the overall mean from the individual mean (both for restaurants and for users).
-
-Regularization is later performed through a Ridge Regression, using cross-validation.
-
-To maintain consistency, this function will be created in this section, but will not be applied until section 3.
+## II. Matrix factorization
 
 
 <a id='baseline'></a>
@@ -1657,6 +1639,10 @@ import sys
 recommendations_full = pd.read_csv('data/recommendations.csv',encoding = "ISO-8859-1",index_col=0)
 sample = recommendations_full.sample(frac=0.1)
 ```
+
+
+    //anaconda/envs/snakes/lib/python3.5/site-packages/IPython/core/interactiveshell.py:2717: DtypeWarning: Columns (37,39,40,41,42,43,44,46,47,48,51,52,53,54,56,57,59,60,61,63,65,66,69,70,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102) have mixed types. Specify dtype option on import or set low_memory=False.
+      interactivity=interactivity, compiler=compiler, result=result)
 
 
 
@@ -1756,6 +1742,12 @@ ftres_all = ['business_mean',
 
 
 ### Approach 1:
+
+These next two functions will be applied to the dataframes iteratively. That is, we will loop through possible lambda2 and lambda3 values, and use cross-validation to determine which combination is optimal.
+
+
+These functions are defined here, but are not applied until Step 3, where we cross-validate.
+
 
 
 
@@ -2003,6 +1995,60 @@ Step2_Option1_Results = cross_validate_lambda(df=sample, ftres_all=ftres_all, re
                                      rating='review_stars', bus_id='business_id', bus_avg='stars', 
                                      user_id='user_id', user_avg='user_average_stars', param_dict=param_dict, nfolds=5)
 ```
+
+
+
+    ---------------------------------------------------------------------------
+
+    KeyError                                  Traceback (most recent call last)
+
+    <ipython-input-15-a051a5ac52c5> in <module>()
+          4 Step2_Option1_Results = cross_validate_lambda(df=sample, ftres_all=ftres_all, response=['review_stars'], 
+          5                                      rating='review_stars', bus_id='business_id', bus_avg='stars',
+    ----> 6                                      user_id='user_id', user_avg='user_average_stars', param_dict=param_dict, nfolds=5)
+    
+
+    <ipython-input-14-64c8f730bd83> in cross_validate_lambda(df, ftres_all, response, rating, bus_id, bus_avg, user_id, user_avg, param_dict, nfolds)
+         38             val_split = join2.iloc[f_val]
+         39 
+    ---> 40             sets['bsln'] = create_set(train_split, val_split, 'review_stars', ftres_all, [5,6])
+         41 
+         42             allScores = train_and_predict_model(LinearRegression(), sets['bsln'])
+
+
+    <ipython-input-11-41d197f1e517> in create_set(df_train, df_test, response, ftres, cat_ftres_index)
+         21     assert (type(ftres) == str or type(ftres) == list)
+         22     if type(ftres) == list:
+    ---> 23         dataset['X_train'] = df_train[dataset['ftres']].values
+         24         dataset['X_test']  = df_test[dataset['ftres']].values
+         25     else:
+
+
+    //anaconda/envs/snakes/lib/python3.5/site-packages/pandas/core/frame.py in __getitem__(self, key)
+       1956         if isinstance(key, (Series, np.ndarray, Index, list)):
+       1957             # either boolean or fancy integer index
+    -> 1958             return self._getitem_array(key)
+       1959         elif isinstance(key, DataFrame):
+       1960             return self._getitem_frame(key)
+
+
+    //anaconda/envs/snakes/lib/python3.5/site-packages/pandas/core/frame.py in _getitem_array(self, key)
+       2000             return self.take(indexer, axis=0, convert=False)
+       2001         else:
+    -> 2002             indexer = self.loc._convert_to_indexer(key, axis=1)
+       2003             return self.take(indexer, axis=1, convert=True)
+       2004 
+
+
+    //anaconda/envs/snakes/lib/python3.5/site-packages/pandas/core/indexing.py in _convert_to_indexer(self, obj, axis, is_setter)
+       1229                 mask = check == -1
+       1230                 if mask.any():
+    -> 1231                     raise KeyError('%s not in index' % objarr[mask])
+       1232 
+       1233                 return _values_from_object(indexer)
+
+
+    KeyError: "['business_mean' 'user_mean' 'is_open_1' 'state_FIF'] not in index"
 
 
 
