@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>final_report_v0</title>
+<title>final_report_group12</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -22244,7 +22244,7 @@ E0KImKNETQghYo4SNSGEiLn/B0bubF1HGWfXAAAAAElFTkSuQmCC
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Conclusions-and-Future-Work">Conclusions and Future Work<a class="anchor-link" href="#Conclusions-and-Future-Work">&#182;</a></h1><p>Between all of the models tested, SVD had the best score when using the RMSE metric (baseline: 1.2; memory CF:  3.9; model-based CF (SVD): 0.04). The drawback to SVD is that it only makes predictions for ~10% of users, meaning that an ensemble method is required to make predictions using an SVD model. Another drawback to our SVD model is that it just makes a prediction; there are no coefficients, which makes interpretability of features difficult.</p>
 <p>If given more time, we would revisit the cosine similarity functions. It seems that these functions failed because there are such a large amount of users. If we were able to filter to a subset of the most important users for any given business, we would be able to reduce the size of this matrix and make a more accurate similarity model as a result. However, this approach would be limited to only those users who are active in Yelp.</p>
-<p>The results from our regularized regression could also likely be improved if we spent more time determining what the most important categorical features were. Lastly, another avenue for improvement would be to incorporate the regularized user bias and restaurant bias into our collaborative filtering models so that it increases the interpretability and the number of predictable users. Such hybrid approach would also address the cold-start problem.</p>
+<p>The results from our regularized regression could also likely be improved if we spent more time determining what the most important categorical features were. Lastly, another avenue for improvement would be to incorporate the regularized user bias and restaurant bias into our collaborative filtering models so that it increases the interpretability and the number of predictable users. Such hybrid approach would also address the cold-start problem. Our EDA work clearly showed that there are relationships between restaurant attributes, thus it would be a great addition to the CF models to improve predictability.</p>
 
 </div>
 </div>
